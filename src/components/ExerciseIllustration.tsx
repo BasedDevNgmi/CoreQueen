@@ -1,4 +1,4 @@
-
+import React, { lazy, Suspense } from 'react';
 
 // Lazy load the animations so they only parse when needed
 const DeadBugAnim = lazy(() => import('./illustrations/DeadBugAnim').then(m => ({ default: m.DeadBugAnim })))

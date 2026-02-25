@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { useLogs } from '@/hooks/useLogs'
+import { shareWorkoutSummary } from '@/lib/share'
 import type { ExerciseDatum } from '@/types/log'
 
 const FEELINGS = ['💪', '🔥', '✨', '😊', '😤', '👑']
@@ -36,11 +37,17 @@ export function LogSessionModal({
     setError(null)
     setLoading(true)
     const { error: err } = await insertLog(exerciseData, notes || undefined, feeling || undefined)
-    setLoading(false)
     if (err) {
+      setLoading(false)
       setError(err.message)
       return
     }
+    await shareWorkoutSummary({
+      exerciseCount: exerciseData.length,
+      feeling: feeling || undefined,
+      date: new Date(),
+    })
+    setLoading(false)
     onOpenChange(false)
     setFeeling('')
     setNotes('')
@@ -66,7 +73,7 @@ export function LogSessionModal({
                   key={emoji}
                   type="button"
                   onClick={() => setFeeling(emoji)}
-                  className={`flex size-12 items-center justify-center rounded-xl border text-2xl transition-all ${
+                  className={`flex min-h-[48px] min-w-[48px] items-center justify-center rounded-xl border text-2xl transition-all focus:outline-none focus:ring-2 focus:ring-[#FF007F] focus:ring-offset-2 focus:ring-offset-background ${
                     feeling === emoji
                       ? 'border-[#FF007F] bg-[#FF007F]/20'
                       : 'border-white/10 bg-white/5 hover:border-white/20'
@@ -97,16 +104,16 @@ export function LogSessionModal({
           )}
         </div>
 
-        <DialogFooter>
+        <DialogFooter className="flex-wrap gap-2 sm:flex-nowrap">
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
-            className="border-white/10"
+            className="min-h-[44px] flex-1 border-white/10 sm:flex-initial"
           >
             Cancel
           </Button>
           <Button
-            className="bg-[#FF007F] hover:bg-[#ff3399]"
+            className="min-h-[44px] flex-1 bg-[#FF007F] hover:bg-[#ff3399] sm:flex-initial"
             onClick={handleSubmit}
             disabled={loading}
           >

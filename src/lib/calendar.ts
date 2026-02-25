@@ -47,6 +47,14 @@ export function formatWeekRange(weekStart: Date): string {
   return `${weekStart.toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' })} – ${end.toLocaleDateString('nl-NL', opts)}`
 }
 
+/** Format for two-week range. */
+export function formatTwoWeekRange(weekStart: Date): string {
+  const end = new Date(weekStart)
+  end.setDate(weekStart.getDate() + 13)
+  const opts: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short', year: 'numeric' }
+  return `${weekStart.toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' })} – ${end.toLocaleDateString('nl-NL', opts)}`
+}
+
 /** YYYY-MM-DD in local timezone for comparing with log dates. */
 export function toDateString(date: Date): string {
   const y = date.getFullYear()

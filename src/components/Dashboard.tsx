@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
-import { motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight, CheckCircle2, Circle, Dumbbell, History, HelpCircle, Settings } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -53,7 +53,7 @@ const container = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
-    transition: { staggerChildren: 0.05 },
+    transition: { staggerChildren: 0.07 },
   },
 }
 
@@ -61,6 +61,8 @@ const item = {
   hidden: { opacity: 0, y: 8 },
   show: { opacity: 1, y: 0 },
 }
+
+const springTransition = { type: 'tween' as const, duration: 0.2 }
 
 /** Map ISO weekday (1=Mon, 3=Wed, 5=Fri) to schedule index. */
 function getScheduleIndexForWeekday(weekday: number): number | null {
@@ -189,11 +191,19 @@ export function Dashboard({ schedule, onSelectDay, onOpenHistory, onOpenTour, on
       initial="hidden"
       animate="show"
     >
-      <motion.div variants={item} className="mb-6 flex flex-col items-center gap-2 text-center sm:mb-8">
-        <h1 className="text-2xl font-black tracking-tight text-foreground sm:text-3xl md:text-4xl">
+      <motion.div variants={item} className="mb-6 flex flex-col items-center gap-1.5 text-center sm:mb-8 sm:gap-2">
+        <h1
+          className="font-display text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl md:text-4xl"
+          style={{
+            background: 'linear-gradient(135deg, #fff 0%, #f0e6ec 40%, #ffcce8 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+          }}
+        >
           {t('dashboard.title')}
         </h1>
-        <p className="mt-1 text-sm text-muted-foreground sm:mt-2 sm:text-base">{t('dashboard.subtitle')}</p>
+        <p className="text-xs text-muted-foreground sm:text-sm">{t('dashboard.subtitle')}</p>
         <div className="flex flex-wrap items-center justify-center gap-1 sm:gap-2">
           {onOpenHistory && (
             <Button
@@ -234,7 +244,7 @@ export function Dashboard({ schedule, onSelectDay, onOpenHistory, onOpenTour, on
       {showReminder && (
         <motion.div
           variants={item}
-          className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-primary/40 bg-primary/10 px-4 py-3"
+          className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-primary/40 bg-primary/10 px-4 py-3 shadow-[0_0_20px_rgba(255,0,127,0.12)]"
         >
           <span className="font-semibold text-foreground">{t('dashboard.reminderTitle')}</span>
           <Button
@@ -258,7 +268,7 @@ export function Dashboard({ schedule, onSelectDay, onOpenHistory, onOpenTour, on
       {stats && (stats.workoutsThisMonth > 0 || stats.currentStreakWeeks > 0) && (
         <motion.div
           variants={item}
-          className="flex flex-wrap justify-center gap-4 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 backdrop-blur-xl sm:gap-6"
+          className="flex flex-wrap justify-center gap-4 rounded-2xl border border-primary/20 bg-white/5 px-4 py-3 backdrop-blur-xl shadow-[0_0_16px_rgba(255,0,127,0.08)] sm:gap-6"
         >
           {stats.currentStreakWeeks > 0 && (
             <span className="text-sm font-semibold text-primary">
@@ -275,10 +285,13 @@ export function Dashboard({ schedule, onSelectDay, onOpenHistory, onOpenTour, on
         variants={item}
         className="flex flex-wrap items-center justify-center gap-2 sm:gap-4"
       >
-        <button
+        <motion.button
           type="button"
           onClick={calendarView === 'day' ? goPrevDay : calendarView === 'month' ? goPrevMonth : goPrevWeek}
-          className="min-h-[44px] min-w-[44px] rounded-lg p-2 text-foreground/80 transition hover:bg-white/10 hover:text-foreground"
+          className="min-h-[44px] min-w-[44px] rounded-lg p-2 text-foreground/80 transition hover:bg-white/10 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.98 }}
+          transition={{ type: 'tween', duration: 0.2 }}
           aria-label={
             calendarView === 'day'
               ? t('dashboard.prevDay')
@@ -288,7 +301,7 @@ export function Dashboard({ schedule, onSelectDay, onOpenHistory, onOpenTour, on
           }
         >
           <ChevronLeft className="size-6" />
-        </button>
+        </motion.button>
         <span className="min-w-0 flex-1 shrink-0 text-center text-sm font-medium tabular-nums text-foreground sm:min-w-[180px] sm:flex-none sm:text-base">
           {calendarView === 'day'
             ? formatDayHeader(focusedDate)
@@ -296,10 +309,13 @@ export function Dashboard({ schedule, onSelectDay, onOpenHistory, onOpenTour, on
               ? formatMonthTitle(monthStart)
               : formatWeekRange(weekStart)}
         </span>
-        <button
+        <motion.button
           type="button"
           onClick={calendarView === 'day' ? goNextDay : calendarView === 'month' ? goNextMonth : goNextWeek}
-          className="min-h-[44px] min-w-[44px] rounded-lg p-2 text-foreground/80 transition hover:bg-white/10 hover:text-foreground"
+          className="min-h-[44px] min-w-[44px] rounded-lg p-2 text-foreground/80 transition hover:bg-white/10 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.98 }}
+          transition={{ type: 'tween', duration: 0.2 }}
           aria-label={
             calendarView === 'day'
               ? t('dashboard.nextDay')
@@ -309,61 +325,90 @@ export function Dashboard({ schedule, onSelectDay, onOpenHistory, onOpenTour, on
           }
         >
           <ChevronRight className="size-6" />
-        </button>
+        </motion.button>
       </motion.div>
 
       <motion.div variants={item} className="flex justify-center">
-        <div className="inline-flex rounded-2xl bg-white/5 p-1.5 shadow-lg shadow-black/20 backdrop-blur-md ring-1 ring-white/10">
+        <div className="relative inline-flex rounded-2xl bg-white/5 p-1.5 shadow-lg shadow-black/20 backdrop-blur-xl ring-1 ring-white/10">
           {(['day', 'week', 'month'] as const).map((mode) => (
             <button
               key={mode}
               type="button"
               onClick={() => setCalendarView(mode)}
-              className={`rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 ${
+              className={`relative z-10 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
                 calendarView === mode
-                  ? 'bg-primary text-primary-foreground shadow-[0_0_20px_rgba(255,0,127,0.35)]'
+                  ? 'text-primary-foreground'
                   : 'text-muted-foreground hover:bg-white/10 hover:text-foreground'
               }`}
             >
-              {mode === 'day' ? t('dashboard.viewDaily') : mode === 'week' ? t('dashboard.viewWeekly') : t('dashboard.viewMonthly')}
+              {calendarView === mode && (
+                <motion.span
+                  layoutId="segment-pill"
+                  className="absolute inset-0 z-0 rounded-xl"
+                  style={{
+                    background: 'linear-gradient(135deg, #FF007F 0%, #e60073 50%, #cc0066 100%)',
+                    boxShadow: '0 0 20px rgba(255, 0, 127, 0.35), inset 0 1px 0 rgba(255,255,255,0.15)',
+                  }}
+                  transition={{ type: 'tween', duration: 0.22 }}
+                />
+              )}
+              <span className="relative z-10">{mode === 'day' ? t('dashboard.viewDaily') : mode === 'week' ? t('dashboard.viewWeekly') : t('dashboard.viewMonthly')}</span>
             </button>
           ))}
         </div>
       </motion.div>
 
-      {calendarView === 'day' && focusedDay && (
-        <motion.div key="day" className="mx-auto max-w-md" variants={container}>
-          {renderDayCard(focusedDay)}
-        </motion.div>
-      )}
+      <AnimatePresence mode="wait">
+        {calendarView === 'day' && focusedDay && (
+          <motion.div
+            key="day"
+            className="mx-auto max-w-md"
+            variants={container}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            {renderDayCard(focusedDay)}
+          </motion.div>
+        )}
 
-      {calendarView === 'week' && (
-        <motion.div
-          key="week"
-          className="grid grid-cols-2 gap-3 sm:grid-cols-4 md:grid-cols-7"
-          variants={container}
-        >
-          {days.map((day) => (
-            <motion.div key={toDateString(day.date)} variants={item} className="min-w-0">
-              {renderDayCard(day)}
-            </motion.div>
-          ))}
-        </motion.div>
-      )}
+        {calendarView === 'week' && (
+          <motion.div
+            key="week"
+            className="grid grid-cols-2 gap-3 sm:grid-cols-4 md:grid-cols-7"
+            variants={container}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            {days.map((day) => (
+              <motion.div key={toDateString(day.date)} variants={item} className="min-w-0">
+                {renderDayCard(day)}
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
 
-      {calendarView === 'month' && (
-        <motion.div
-          key="month"
-          className="grid grid-cols-7 gap-1.5 sm:gap-2"
-          variants={container}
-        >
-          {monthGrid.map((cell, i) => (
-            <motion.div key={i} variants={item} className="min-w-0">
-              {cell ? renderDayCard(cell, true) : <div className="aspect-square rounded-xl bg-white/[0.02]" />}
-            </motion.div>
-          ))}
-        </motion.div>
-      )}
+        {calendarView === 'month' && (
+          <motion.div
+            key="month"
+            className="grid grid-cols-7 gap-1.5 sm:gap-2"
+            variants={container}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            {monthGrid.map((cell, i) => (
+              <motion.div key={i} variants={item} className="min-w-0">
+                {cell ? renderDayCard(cell, true) : <div className="aspect-square rounded-xl bg-white/[0.02]" />}
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   )
 
@@ -373,7 +418,18 @@ export function Dashboard({ schedule, onSelectDay, onOpenHistory, onOpenTour, on
     const isRestClickable = !day.isWorkoutDay && !completed && compact
     const isClickable = isWorkoutClickable || isRestClickable
     const isToday = toDateString(day.date) === toDateString(new Date())
-    const CardWrap = isClickable ? 'button' : 'div'
+    const CardWrap = isClickable ? motion.button : motion.div
+    const baseClass = `relative flex w-full flex-col justify-center rounded-2xl border border-white/10 bg-white/5 text-left backdrop-blur-xl transition-all duration-200 card-glass ${
+      compact ? 'min-h-0 p-2 sm:p-2' : 'min-h-[88px] p-3 sm:min-h-[100px] sm:p-4'
+    } ${
+      isToday
+        ? 'ring-2 ring-primary ring-offset-2 ring-offset-background shadow-[0_0_28px_rgba(255,0,127,0.25),0_0_12px_rgba(255,0,127,0.15),inset_0_1px_0_rgba(255,255,255,0.06)]'
+        : 'shadow-lg shadow-black/20'
+    } ${
+      isClickable
+        ? 'cursor-pointer border-white/10 hover:border-primary/50 hover:bg-white/10 hover:shadow-[0_0_24px_rgba(255,0,127,0.18)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background active:bg-white/15'
+        : 'cursor-default border-white/10 opacity-90'
+    }`
     return (
       <CardWrap
         type={isClickable ? 'button' : undefined}
@@ -387,15 +443,10 @@ export function Dashboard({ schedule, onSelectDay, onOpenHistory, onOpenTour, on
                 }
             : undefined
         }
-        className={`relative flex w-full flex-col justify-center rounded-2xl border bg-white/5 text-left shadow-lg shadow-black/10 backdrop-blur-xl transition-all duration-200 ${
-          compact ? 'min-h-0 p-2 sm:p-2' : 'min-h-[88px] p-3 sm:min-h-[100px] sm:p-4'
-        } ${
-          isToday ? 'ring-2 ring-primary ring-offset-2 ring-offset-background shadow-[0_0_24px_rgba(255,0,127,0.2)]' : ''
-        } ${
-          isClickable
-            ? 'cursor-pointer border-white/10 hover:border-primary/50 hover:bg-white/10 hover:shadow-[0_0_20px_rgba(255,0,127,0.12)] active:bg-white/15'
-            : 'cursor-default border-white/10 opacity-90'
-        }`}
+        className={baseClass}
+        whileHover={isClickable ? { scale: 1.02 } : undefined}
+        whileTap={isClickable ? { scale: 0.98 } : undefined}
+        transition={springTransition}
       >
         <div className={`flex items-center justify-between ${compact ? 'mb-0.5' : 'mb-2'}`}>
           <span className={`font-bold uppercase tracking-wider text-muted-foreground ${compact ? 'text-[10px]' : 'text-xs'}`}>
@@ -404,7 +455,13 @@ export function Dashboard({ schedule, onSelectDay, onOpenHistory, onOpenTour, on
           </span>
           {day.isWorkoutDay ? (
             completed ? (
-              <CheckCircle2 className={`shrink-0 text-primary ${compact ? 'size-3' : 'size-5'}`} aria-hidden />
+              <motion.span
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+              >
+                <CheckCircle2 className={`shrink-0 text-primary ${compact ? 'size-3' : 'size-5'}`} aria-hidden />
+              </motion.span>
             ) : (
               <Circle className={`shrink-0 text-primary/60 ${compact ? 'size-3' : 'size-5'}`} aria-hidden />
             )
@@ -422,17 +479,19 @@ export function Dashboard({ schedule, onSelectDay, onOpenHistory, onOpenTour, on
             <>
               <span className={`text-muted-foreground ${compact ? 'text-[10px]' : 'text-sm'}`}>{t('dashboard.restDay')}</span>
               {!completed && !compact && (
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="min-h-[36px] shrink-0 text-xs text-primary hover:bg-primary/20"
+                <motion.button
+                  type="button"
+                  className="min-h-[36px] shrink-0 rounded-full border border-primary/40 bg-primary/10 px-3 text-xs font-medium text-primary transition-colors hover:bg-primary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                   onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                     e.stopPropagation()
                     handleLogRest(day)
                   }}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.98 }}
+                  transition={springTransition}
                 >
                   {t('dashboard.logRest')}
-                </Button>
+                </motion.button>
               )}
             </>
           )}

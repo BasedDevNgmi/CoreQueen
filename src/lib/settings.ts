@@ -56,14 +56,15 @@ export function setSoundEnabled(enabled: boolean) {
   }
 }
 
-export type Theme = 'dark' | 'light'
+export type Theme = 'dark' | 'light' | 'system'
 
 export function getTheme(): Theme {
   try {
     const v = localStorage.getItem(THEME_KEY)
-    return v === 'light' ? 'light' : 'dark'
+    if (v === 'light' || v === 'dark' || v === 'system') return v
+    return 'system'
   } catch {
-    return 'dark'
+    return 'system'
   }
 }
 
@@ -73,4 +74,10 @@ export function setTheme(theme: Theme) {
   } catch {
     // ignore
   }
+}
+
+/** Resolved theme for applying to the document when preference is 'system'. */
+export function getSystemPrefersDark(): boolean {
+  if (typeof window === 'undefined' || !window.matchMedia) return true
+  return window.matchMedia('(prefers-color-scheme: dark)').matches
 }

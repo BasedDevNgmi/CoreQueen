@@ -75,9 +75,9 @@ export function LogSessionModal({
                   key={emoji}
                   type="button"
                   onClick={() => setFeeling(emoji)}
-                  className={`flex min-h-[48px] min-w-[48px] items-center justify-center rounded-xl border text-2xl transition-all focus:outline-none focus:ring-2 focus:ring-[#FF007F] focus:ring-offset-2 focus:ring-offset-background ${
+                  className={`flex min-h-[48px] min-w-[48px] items-center justify-center rounded-xl border text-2xl transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background ${
                     feeling === emoji
-                      ? 'border-[#FF007F] bg-[#FF007F]/20'
+                      ? 'border-primary bg-primary/20'
                       : 'border-white/10 bg-white/5 hover:border-white/20'
                   }`}
                 >
@@ -97,7 +97,7 @@ export function LogSessionModal({
               onChange={(e) => setNotes(e.target.value)}
               placeholder={t('logSession.notesPlaceholder')}
               rows={3}
-              className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-foreground placeholder:text-muted-foreground focus:border-[#FF007F] focus:outline-none focus:ring-2 focus:ring-[#FF007F]/30"
+              className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
             />
           </div>
 
@@ -115,7 +115,7 @@ export function LogSessionModal({
             {t('logSession.cancel')}
           </Button>
           <Button
-            className="min-h-[44px] flex-1 bg-[#FF007F] hover:bg-[#ff3399] sm:flex-initial"
+            className="min-h-[44px] flex-1 bg-primary hover:bg-neon-pink-hover sm:flex-initial"
             onClick={handleSubmit}
             disabled={loading}
           >

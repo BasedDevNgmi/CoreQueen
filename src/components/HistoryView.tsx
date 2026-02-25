@@ -82,7 +82,7 @@ const LogCard = memo(function LogCard({
               {log.exercise_data?.length ? (
                 <ul className="space-y-1 text-sm text-muted-foreground">
                   {log.exercise_data.map((e, i) => (
-                    <li key={i} className={e.completed ? 'text-[#FF007F]' : ''}>
+                    <li key={i} className={e.completed ? 'text-primary' : ''}>
                       {e.completed ? '✓ ' : '○ '}
                       {e.name}
                     </li>
@@ -176,7 +176,7 @@ export function HistoryView({ onBack }: HistoryViewProps) {
           <Button
             variant="ghost"
             size="sm"
-            className="min-h-[36px] text-muted-foreground hover:text-[#FF007F]"
+            className="min-h-[36px] text-muted-foreground hover:text-primary"
             onClick={() => handleExport('json')}
             disabled={exporting || logs.length === 0}
           >
@@ -186,7 +186,7 @@ export function HistoryView({ onBack }: HistoryViewProps) {
           <Button
             variant="ghost"
             size="sm"
-            className="min-h-[36px] text-muted-foreground hover:text-[#FF007F]"
+            className="min-h-[36px] text-muted-foreground hover:text-primary"
             onClick={() => handleExport('csv')}
             disabled={exporting || logs.length === 0}
           >

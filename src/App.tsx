@@ -1,11 +1,18 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, lazy, Suspense } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { Dashboard } from '@/components/Dashboard'
-import { WorkoutView } from '@/components/WorkoutView'
-import { HistoryView } from '@/components/HistoryView'
-import { SettingsView } from '@/components/SettingsView'
 import { WORKOUT_SCHEDULE } from '@/data/workouts'
 import type { WorkoutDay } from '@/data/workouts'
+
+const WorkoutView = lazy(() =>
+  import('@/components/WorkoutView').then((m) => ({ default: m.WorkoutView }))
+)
+const HistoryView = lazy(() =>
+  import('@/components/HistoryView').then((m) => ({ default: m.HistoryView }))
+)
+const SettingsView = lazy(() =>
+  import('@/components/SettingsView').then((m) => ({ default: m.SettingsView }))
+)
 import { flushPendingLogs, getPendingCount } from '@/lib/offlineLogs'
 import { Button } from '@/components/ui/button'
 import { OnboardingTour, shouldShowTour } from '@/components/OnboardingTour'
@@ -30,9 +37,6 @@ function App() {
 
   useEffect(() => {
     refreshPendingCount()
-  }, [refreshPendingCount])
-
-  useEffect(() => {
     window.addEventListener('online', refreshPendingCount)
     return () => window.removeEventListener('online', refreshPendingCount)
   }, [refreshPendingCount])
@@ -63,7 +67,7 @@ function App() {
   return (
     <div className="min-h-screen min-h-[100dvh] bg-background pt-[env(safe-area-inset-top)]">
       {pendingCount > 0 && (
-        <div className="flex flex-wrap items-center justify-between gap-2 bg-[#FF007F]/20 px-4 py-2 text-sm text-white sm:flex-nowrap">
+        <div className="flex flex-wrap items-center justify-between gap-2 bg-primary/20 px-4 py-2 text-sm text-white sm:flex-nowrap">
           <span className="min-w-0 flex-1">
             {pendingCount === 1 ? t('app.pendingLogsOne') : `${pendingCount} ${t('app.pendingLogsMany')}`}
           </span>
@@ -73,9 +77,10 @@ function App() {
         </div>
       )}
       <main className="pb-[env(safe-area-inset-bottom)]">
-        <AnimatePresence mode="wait">
-          {view === 'dashboard' && (
-          <Dashboard
+        <Suspense fallback={<div className="flex min-h-[50vh] items-center justify-center text-muted-foreground">Loading…</div>}>
+          <AnimatePresence mode="wait">
+            {view === 'dashboard' && (
+            <Dashboard
             key="dashboard"
             schedule={WORKOUT_SCHEDULE}
             onSelectDay={handleSelectDay}
@@ -97,7 +102,8 @@ function App() {
         {view === 'settings' && (
           <SettingsView key="settings" onBack={handleBackToDashboard} />
         )}
-        </AnimatePresence>
+          </AnimatePresence>
+        </Suspense>
       </main>
       <OnboardingTour open={tourOpen} onOpenChange={setTourOpen} />
     </div>

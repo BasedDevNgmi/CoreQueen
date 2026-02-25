@@ -22,12 +22,12 @@ export function ExerciseDetailSheet({
   if (!exercise) return null
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="border-white/10 bg-[#1a1a1a] text-foreground">
+      <DialogContent className="border-white/10 bg-popover text-foreground">
         <DialogHeader>
           <DialogTitle className="text-xl text-white">{exercise.name}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
-          <p className="text-sm font-medium text-[#FF007F]">{exercise.setsReps}</p>
+          <p className="text-sm font-medium text-primary">{exercise.setsReps}</p>
           {exercise.why && (
             <div>
               <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">

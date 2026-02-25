@@ -63,7 +63,7 @@ function fireConfetti() {
     particleCount: 60,
     spread: 70,
     origin: { y: 0.7 },
-    colors: ['#FF007F', '#ff3399', '#fff'],
+    colors: ['var(--primary)', 'var(--chart-2)', '#fff'],
   })
 }
 
@@ -163,7 +163,7 @@ export function WorkoutView({ day, onBack }: WorkoutViewProps) {
                     id={`ex-${i}`}
                     checked={completed[i]}
                     onCheckedChange={() => toggle(i)}
-                    className="border-white/30 data-[state=checked]:bg-[#FF007F] data-[state=checked]:border-[#FF007F]"
+                    className="border-white/30 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                   />
                   <label
                     htmlFor={`ex-${i}`}
@@ -171,7 +171,7 @@ export function WorkoutView({ day, onBack }: WorkoutViewProps) {
                   >
                     <span className="flex min-w-0 items-center gap-2">
                       {completed[i] ? (
-                        <CheckCircle2 className="size-5 shrink-0 text-[#FF007F]" />
+                        <CheckCircle2 className="size-5 shrink-0 text-primary" />
                       ) : null}
                       <span className={`min-w-0 truncate sm:max-w-none ${completed[i] ? 'line-through opacity-80' : ''}`}>
                         {ex.name}
@@ -186,7 +186,7 @@ export function WorkoutView({ day, onBack }: WorkoutViewProps) {
                           setExerciseDetail(ex)
                           setExerciseDetailOpen(true)
                         }}
-                        className="ml-auto rounded p-1 text-muted-foreground hover:bg-white/10 hover:text-[#FF007F]"
+                        className="ml-auto rounded p-1 text-muted-foreground hover:bg-white/10 hover:text-primary"
                         aria-label={`Info over ${ex.name}`}
                       >
                         <Info className="size-4" />
@@ -208,7 +208,7 @@ export function WorkoutView({ day, onBack }: WorkoutViewProps) {
       <div className="flex justify-end">
         <Button
           size="lg"
-          className="bg-[#FF007F] font-bold hover:bg-[#ff3399]"
+          className="bg-primary font-bold hover:bg-neon-pink-hover"
           onClick={() => setLogModalOpen(true)}
           disabled={!allDone}
         >
@@ -240,10 +240,10 @@ export function WorkoutView({ day, onBack }: WorkoutViewProps) {
               initial={{ scale: 0.9 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0.9 }}
-              className="w-full max-w-sm rounded-2xl border border-white/10 bg-[#1a1a1a] px-6 py-6 text-center shadow-xl sm:px-8"
+              className="w-full max-w-sm rounded-2xl border border-white/10 bg-popover px-6 py-6 text-center shadow-xl sm:px-8"
             >
               <p className="text-muted-foreground">{t('workout.rest')}</p>
-              <p className="mt-2 text-4xl font-black tabular-nums text-[#FF007F]">
+              <p className="mt-2 text-4xl font-black tabular-nums text-primary">
                 {Math.floor((restSecondsLeft ?? 0) / 60)}:{(restSecondsLeft ?? 0) % 60 < 10 ? '0' : ''}{(restSecondsLeft ?? 0) % 60}
               </p>
               <Button

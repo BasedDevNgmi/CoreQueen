@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -47,7 +47,7 @@ export function OnboardingTour({ open, onOpenChange }: OnboardingTourProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="border-white/10 bg-[#1a1a1a] text-foreground">
+      <DialogContent className="border-white/10 bg-popover text-foreground">
         <DialogHeader>
           <DialogTitle className="text-white">{steps[step].title}</DialogTitle>
           <DialogDescription>{steps[step].body}</DialogDescription>
@@ -58,7 +58,7 @@ export function OnboardingTour({ open, onOpenChange }: OnboardingTourProps) {
               <div
                 key={i}
                 className={`h-1.5 w-8 rounded-full transition ${
-                  i === step ? 'bg-[#FF007F]' : 'bg-white/20'
+                  i === step ? 'bg-primary' : 'bg-white/20'
                 }`}
               />
             ))}
@@ -66,7 +66,7 @@ export function OnboardingTour({ open, onOpenChange }: OnboardingTourProps) {
         </div>
         <DialogFooter>
           <Button
-            className="bg-[#FF007F] hover:bg-[#ff3399]"
+            className="bg-primary hover:bg-neon-pink-hover"
             onClick={handleNext}
           >
             {isLast ? t('tour.done') : t('tour.next')}
@@ -75,18 +75,6 @@ export function OnboardingTour({ open, onOpenChange }: OnboardingTourProps) {
       </DialogContent>
     </Dialog>
   )
-}
-
-export function useTourDone(): boolean {
-  const [done, setDone] = useState(true)
-  useEffect(() => {
-    try {
-      setDone(localStorage.getItem(TOUR_DONE_KEY) === 'true')
-    } catch {
-      setDone(false)
-    }
-  }, [])
-  return done
 }
 
 export function shouldShowTour(): boolean {

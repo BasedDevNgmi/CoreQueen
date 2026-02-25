@@ -7,6 +7,7 @@ export interface WorkoutExercise {
   cues?: string[]
   imageUrl?: string
   videoUrl?: string
+  animationComponent?: string
 }
 
 export interface WorkoutDay {
@@ -20,33 +21,33 @@ export interface WorkoutDay {
 
 /* WEEK 1: Foundation & Stability (Activation) */
 const W1_D1: WorkoutExercise[] = [
-  { name: 'Dead Bug', setsReps: '3 × 12', why: 'Traint diepe buikspieren plat op de grond.', imageUrl: '/assets/exercises/dead_bug.png', videoUrl: 'https://youtube.com/shorts/IajDDSRXhOw' },
-  { name: 'Glute Bridges', setsReps: '3 × 15', why: 'Activeert billen en verlicht de onderrug.', imageUrl: '/assets/exercises/glute_bridge.png', videoUrl: 'https://youtube.com/shorts/q2O-s-Ym8C0' },
-  { name: 'Modified Plank (Knees)', setsReps: '3 × 30 sec', why: 'Basis uithoudingsvermogen voor de core.', imageUrl: '/assets/exercises/modified_plank.png', videoUrl: 'https://youtube.com/shorts/YeBsgzO5y88' },
+  { name: 'Dead Bug', setsReps: '3 × 12', why: 'Traint diepe buikspieren plat op de grond.', imageUrl: '/assets/exercises/dead_bug.png', videoUrl: 'https://youtube.com/shorts/IajDDSRXhOw', animationComponent: 'DeadBugAnim' },
+  { name: 'Glute Bridges', setsReps: '3 × 15', why: 'Activeert billen en verlicht de onderrug.', imageUrl: '/assets/exercises/glute_bridge.png', videoUrl: 'https://youtube.com/shorts/q2O-s-Ym8C0', animationComponent: 'GluteBridgeAnim' },
+  { name: 'Modified Plank (Knees)', setsReps: '3 × 30 sec', why: 'Basis uithoudingsvermogen voor de core.', imageUrl: '/assets/exercises/modified_plank.png', videoUrl: 'https://youtube.com/shorts/YeBsgzO5y88', animationComponent: 'PlankAnim' },
 ]
 const W1_D2: WorkoutExercise[] = [
-  { name: 'Bird Dog', setsReps: '3 × 10', why: 'Versterkt de achterkant en core zonder compressie.', imageUrl: '/assets/exercises/bird_dog.png', videoUrl: 'https://youtube.com/shorts/wiFNA3sqjCA' },
+  { name: 'Bird Dog', setsReps: '3 × 10', why: 'Versterkt de achterkant en core zonder compressie.', imageUrl: '/assets/exercises/bird_dog.png', videoUrl: 'https://youtube.com/shorts/wiFNA3sqjCA', animationComponent: 'BirdDogAnim' },
   { name: 'Side Plank (Knees)', setsReps: '3 × 20 sec per kant', why: 'Traint de schuine buikspieren zachtjes.', imageUrl: '/assets/exercises/side_plank.png', videoUrl: 'https://youtube.com/shorts/K2V-xIiyqB8' },
   { name: 'Heel Taps', setsReps: '3 × 20', why: 'Isoleert lagere buikspieren.', imageUrl: '/assets/exercises/heel_taps.png', videoUrl: 'https://youtube.com/shorts/32V-NqKqQjc' },
 ]
 const W1_D3: WorkoutExercise[] = [
-  { name: 'Dead Bug', setsReps: '3 × 15', why: 'Traint diepe buikspieren plat op de grond.', imageUrl: '/assets/exercises/dead_bug.png', videoUrl: 'https://youtube.com/shorts/IajDDSRXhOw' },
+  { name: 'Dead Bug', setsReps: '3 × 15', why: 'Traint diepe buikspieren plat op de grond.', imageUrl: '/assets/exercises/dead_bug.png', videoUrl: 'https://youtube.com/shorts/IajDDSRXhOw', animationComponent: 'DeadBugAnim' },
   { name: 'Kettlebell Suitcase Carry', setsReps: '3 × 30 m', why: 'Core recht houden tegen weerstand in.', imageUrl: '/assets/exercises/kettlebell_carry.png', videoUrl: 'https://youtube.com/shorts/XJ-zDtd5aN8' },
 ]
 
 /* WEEK 2: Core Activation (Building) */
 const W2_D1: WorkoutExercise[] = [
-  { name: 'Hollow Body Hold (Bent Knees)', setsReps: '3 × 20 sec', why: 'Traint de voorste core stevig.', imageUrl: '/assets/exercises/hollow_body_hold.png', videoUrl: 'https://youtube.com/shorts/p1x8N9vF628' },
-  { name: 'Glute Bridges (Single Leg, assisted)', setsReps: '3 × 10 per kant', why: 'Bouwt asymmetrische kracht in de bil.', imageUrl: '/assets/exercises/glute_bridge.png', videoUrl: 'https://youtube.com/shorts/5xT9cMqyJ0U' },
-  { name: 'Full Plank', setsReps: '3 × 30 sec', why: 'Standaard kern uithoudingsvermogen.', imageUrl: '/assets/exercises/modified_plank.png', videoUrl: 'https://youtube.com/shorts/pSHjTRCQxIw' },
+  { name: 'Hollow Body Hold (Bent Knees)', setsReps: '3 × 20 sec', why: 'Traint de voorste core stevig.', imageUrl: '/assets/exercises/hollow_body_hold.png', videoUrl: 'https://youtube.com/shorts/p1x8N9vF628', animationComponent: 'HollowBodyAnim' },
+  { name: 'Glute Bridges (Single Leg, assisted)', setsReps: '3 × 10 per kant', why: 'Bouwt asymmetrische kracht in de bil.', imageUrl: '/assets/exercises/glute_bridge.png', videoUrl: 'https://youtube.com/shorts/5xT9cMqyJ0U', animationComponent: 'GluteBridgeAnim' },
+  { name: 'Full Plank', setsReps: '3 × 30 sec', why: 'Standaard kern uithoudingsvermogen.', imageUrl: '/assets/exercises/modified_plank.png', videoUrl: 'https://youtube.com/shorts/pSHjTRCQxIw', animationComponent: 'PlankAnim' },
 ]
-const W2_D2: WorkoutExercise[] = [...W1_D2, { name: 'Dead Bug', setsReps: '3 × 12', imageUrl: '/assets/exercises/dead_bug.png', videoUrl: 'https://youtube.com/shorts/IajDDSRXhOw' }]
-const W2_D3: WorkoutExercise[] = [...W1_D3, { name: 'Bird Dog', setsReps: '3 × 12', imageUrl: '/assets/exercises/bird_dog.png', videoUrl: 'https://youtube.com/shorts/wiFNA3sqjCA' }]
+const W2_D2: WorkoutExercise[] = [...W1_D2, { name: 'Dead Bug', setsReps: '3 × 12', imageUrl: '/assets/exercises/dead_bug.png', videoUrl: 'https://youtube.com/shorts/IajDDSRXhOw', animationComponent: 'DeadBugAnim' }]
+const W2_D3: WorkoutExercise[] = [...W1_D3, { name: 'Bird Dog', setsReps: '3 × 12', imageUrl: '/assets/exercises/bird_dog.png', videoUrl: 'https://youtube.com/shorts/wiFNA3sqjCA', animationComponent: 'BirdDogAnim' }]
 
 /* WEEK 3: Progression (Intensity up) */
 const W3_D1: WorkoutExercise[] = [
-  { name: 'Hollow Body Hold', setsReps: '4 × 20 sec', why: 'Traint de voorste core stevig.', imageUrl: '/assets/exercises/hollow_body_hold.png', videoUrl: 'https://youtube.com/shorts/p1x8N9vF628' },
-  { name: 'Russian Twists', setsReps: '3 × 20', why: 'Rotatiekracht voor schuine buikspieren.', imageUrl: '/assets/exercises/russian_twists.png', videoUrl: 'https://youtube.com/shorts/wkD8rjkodUI' },
+  { name: 'Hollow Body Hold', setsReps: '4 × 20 sec', why: 'Traint de voorste core stevig.', imageUrl: '/assets/exercises/hollow_body_hold.png', videoUrl: 'https://youtube.com/shorts/p1x8N9vF628', animationComponent: 'HollowBodyAnim' },
+  { name: 'Russian Twists', setsReps: '3 × 20', why: 'Rotatiekracht voor schuine buikspieren.', imageUrl: '/assets/exercises/russian_twists.png', videoUrl: 'https://youtube.com/shorts/wkD8rjkodUI', animationComponent: 'RussianTwistsAnim' },
 ]
 const W3_D2: WorkoutExercise[] = [...W2_D2]
 const W3_D3: WorkoutExercise[] = [...W2_D3]

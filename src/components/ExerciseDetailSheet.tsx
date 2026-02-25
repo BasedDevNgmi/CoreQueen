@@ -7,6 +7,7 @@ import {
 import { Play } from 'lucide-react'
 import { useTranslation } from '@/lib/i18n'
 import type { WorkoutExercise } from '@/data/workouts'
+import { ExerciseIllustration } from './ExerciseIllustration'
 
 interface ExerciseDetailSheetProps {
   exercise: WorkoutExercise | null
@@ -28,11 +29,11 @@ export function ExerciseDetailSheet({
           <DialogTitle className="text-xl text-foreground font-display">{exercise.name}</DialogTitle>
         </DialogHeader>
         <div className="space-y-6 mt-2">
-          {exercise.imageUrl && (
-            <div className="w-full h-48 bg-muted rounded-xl border border-border flex items-center justify-center overflow-hidden">
-              <img src={exercise.imageUrl} alt={exercise.name} className="w-full h-full object-cover mix-blend-multiply" />
-            </div>
-          )}
+          <ExerciseIllustration
+            animationComponent={exercise.animationComponent}
+            fallbackImageUrl={exercise.imageUrl}
+            alt={exercise.name}
+          />
 
           <div>
             <p className="text-sm font-bold tracking-widest uppercase text-charcoal">{exercise.setsReps}</p>

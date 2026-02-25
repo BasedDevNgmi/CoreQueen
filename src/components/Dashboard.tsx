@@ -101,7 +101,7 @@ export function Dashboard({ onSelectDay }: DashboardProps) {
         </p>
 
         {/* Horizontal Week Selector */}
-        <div className="mt-8 -mx-6 px-6 overflow-x-auto pb-4 scrollbar-hide snap-x flex gap-3">
+        <div className="mt-8 flex gap-3 overflow-x-auto pb-4 scrollbar-hide snap-x">
           {[1, 2, 3, 4, 5, 6].map((w) => {
             const isSelected = activeWeekNum === w
             const isLocked = w > currentWeekNum

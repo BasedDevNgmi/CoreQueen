@@ -1,7 +1,7 @@
-const REMINDER_TIME_KEY = 'corequeen_reminder_time'
-const SOUND_ENABLED_KEY = 'corequeen_sound_enabled'
-const THEME_KEY = 'corequeen_theme'
-const LOCALE_KEY = 'corequeen_locale'
+const REMINDER_TIME_KEY = 'coreroutine_reminder_time'
+const SOUND_ENABLED_KEY = 'coreroutine_sound_enabled'
+const THEME_KEY = 'coreroutine_theme'
+const LOCALE_KEY = 'coreroutine_locale'
 
 export type Locale = 'nl' | 'en'
 

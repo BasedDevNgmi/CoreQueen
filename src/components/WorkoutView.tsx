@@ -34,7 +34,7 @@ function playCompletionFeedback() {
   }
 }
 
-const REST_SECONDS_KEY = 'corequeen_rest_seconds'
+const REST_SECONDS_KEY = 'coreroutine_rest_seconds'
 const DEFAULT_REST_SECONDS = 60
 
 function getRestSeconds(): number {

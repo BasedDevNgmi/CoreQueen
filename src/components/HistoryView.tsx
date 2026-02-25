@@ -118,7 +118,7 @@ export function HistoryView({ onBack }: HistoryViewProps) {
       const data = await fetchLogs(500)
       if (format === 'json') {
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
-        downloadBlob(blob, `corequeen-logs-${new Date().toISOString().slice(0, 10)}.json`)
+        downloadBlob(blob, `coreroutine-logs-${new Date().toISOString().slice(0, 10)}.json`)
       } else {
         const headers = ['date', 'feeling', 'notes', 'exercises_completed']
         const rows = data.map((log) => {
@@ -130,7 +130,7 @@ export function HistoryView({ onBack }: HistoryViewProps) {
         })
         const csv = [headers.join(','), ...rows].join('\n')
         const blob = new Blob([csv], { type: 'text/csv' })
-        downloadBlob(blob, `corequeen-logs-${new Date().toISOString().slice(0, 10)}.csv`)
+        downloadBlob(blob, `coreroutine-logs-${new Date().toISOString().slice(0, 10)}.csv`)
       }
     } finally {
       setExporting(false)

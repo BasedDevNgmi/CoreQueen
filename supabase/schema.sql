@@ -1,4 +1,4 @@
--- CoreQueen logs table (no auth; use user_id for future segmentation)
+-- Core Routine logs table (no auth; use user_id for future segmentation)
 create table if not exists public.logs (
   id uuid primary key default gen_random_uuid(),
   created_at timestamptz not null default now(),

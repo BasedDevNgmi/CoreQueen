@@ -1,4 +1,4 @@
-# CoreQueen
+# Core Routine
 
 Pink & Badass fitness PWA: 3-day workout schedule, exercise checklists with confetti, and session logging to Supabase.
 
@@ -38,4 +38,4 @@ Use “Add to Home Screen” on iOS/Android. Icons: `public/icon-192.png`, `publ
 
 - **Dashboard**: 3-day schedule (Day A/B/C). Day A includes Suitcase Carry and Dead Bug.
 - **Workout**: Check exercises; confetti on complete. “Log session” opens feeling + notes modal and writes to Supabase `logs` (no auth; `user_id` is fixed for now).
-# CoreQueen
+# Core Routine

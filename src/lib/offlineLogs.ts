@@ -1,6 +1,6 @@
 import { supabase } from '@/lib/supabase'
 
-const PENDING_KEY = 'corequeen_pending_logs'
+const PENDING_KEY = 'coreroutine_pending_logs'
 
 export interface PendingLogRow {
   user_id: string
@@ -33,7 +33,7 @@ export function addPendingLog(row: PendingLogRow) {
   logs.push(row)
   setPendingLogs(logs)
   if (typeof window !== 'undefined') {
-    window.dispatchEvent(new CustomEvent('corequeen_pending_change'))
+    window.dispatchEvent(new CustomEvent('coreroutine_pending_change'))
   }
 }
 

@@ -12,8 +12,8 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       manifest: {
-        name: 'CoreQueen',
-        short_name: 'CoreQueen',
+        name: 'Core Routine',
+        short_name: 'Core Routine',
         description: 'Pink & Badass fitness PWA',
         theme_color: '#FF007F',
         background_color: '#0f0f0f',

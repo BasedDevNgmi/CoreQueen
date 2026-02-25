@@ -44,8 +44,8 @@ function App() {
 
   useEffect(() => {
     const onPendingChange = () => setPendingCount(getPendingCount())
-    window.addEventListener('corequeen_pending_change', onPendingChange)
-    return () => window.removeEventListener('corequeen_pending_change', onPendingChange)
+    window.addEventListener('coreroutine_pending_change', onPendingChange)
+    return () => window.removeEventListener('coreroutine_pending_change', onPendingChange)
   }, [])
 
   const handleSyncNow = refreshPendingCount

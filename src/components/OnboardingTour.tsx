@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/dialog'
 import { useTranslation } from '@/lib/i18n'
 
-const TOUR_DONE_KEY = 'corequeen_tour_done'
+const TOUR_DONE_KEY = 'coreroutine_tour_done'
 
 function useTourSteps() {
   const { t } = useTranslation()
@@ -57,9 +57,8 @@ export function OnboardingTour({ open, onOpenChange }: OnboardingTourProps) {
             {steps.map((_, i) => (
               <div
                 key={i}
-                className={`h-1.5 w-8 rounded-full transition ${
-                  i === step ? 'bg-primary' : 'bg-white/20'
-                }`}
+                className={`h-1.5 w-8 rounded-full transition ${i === step ? 'bg-primary' : 'bg-white/20'
+                  }`}
               />
             ))}
           </div>

@@ -2,12 +2,15 @@ import { useState, useEffect } from 'react'
 import { ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { getReminderTime, setReminderTime, getSoundEnabled, setSoundEnabled, getTheme, setTheme, type Theme } from '@/lib/settings'
+import type { Locale } from '@/lib/settings'
+import { useTranslation } from '@/lib/i18n'
 
 interface SettingsViewProps {
   onBack: () => void
 }
 
 export function SettingsView({ onBack }: SettingsViewProps) {
+  const { t, locale, setLocale: setLocaleState } = useTranslation()
   const [reminderTime, setReminderTimeState] = useState(getReminderTime() ?? '')
   const [soundEnabled, setSoundEnabledState] = useState(getSoundEnabled())
   const [theme, setThemeState] = useState<Theme>(getTheme())
@@ -33,9 +36,13 @@ export function SettingsView({ onBack }: SettingsViewProps) {
     setSoundEnabled(enabled)
   }
 
-  const handleThemeChange = (t: Theme) => {
-    setThemeState(t)
-    setTheme(t)
+  const handleThemeChange = (next: Theme) => {
+    setThemeState(next)
+    setTheme(next)
+  }
+
+  const handleLocaleChange = (next: Locale) => {
+    setLocaleState(next)
   }
 
   return (
@@ -50,14 +57,14 @@ export function SettingsView({ onBack }: SettingsViewProps) {
         >
           <ArrowLeft className="size-5" />
         </Button>
-        <h2 className="text-lg font-bold text-foreground sm:text-xl">Settings</h2>
+        <h2 className="text-lg font-bold text-foreground sm:text-xl">{t('settings.title')}</h2>
         <div className="w-9" />
       </div>
 
       <div className="space-y-6 rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl sm:p-5">
         <div>
           <label className="block text-sm font-medium text-muted-foreground">
-            Reminder time (workout days)
+            {t('settings.reminderLabel')}
           </label>
           <input
             type="time"
@@ -66,11 +73,11 @@ export function SettingsView({ onBack }: SettingsViewProps) {
             className="mt-2 min-h-[44px] w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-foreground"
           />
           <p className="mt-1 text-xs text-muted-foreground">
-            You’ll see an in-app reminder when you open the app after this time on Mon/Wed/Fri.
+            {t('settings.reminderHint')}
           </p>
         </div>
         <div className="flex min-h-[44px] items-center justify-between gap-4">
-          <span className="text-sm font-medium text-foreground">Sound & haptic on completion</span>
+          <span className="text-sm font-medium text-foreground">{t('settings.soundHaptic')}</span>
           <button
             type="button"
             role="switch"
@@ -88,21 +95,40 @@ export function SettingsView({ onBack }: SettingsViewProps) {
           </button>
         </div>
         <div className="flex min-h-[44px] flex-wrap items-center justify-between gap-3">
-          <span className="text-sm font-medium text-foreground">Theme</span>
+          <span className="text-sm font-medium text-foreground">{t('settings.theme')}</span>
           <div className="flex gap-2">
             <button
               type="button"
               onClick={() => handleThemeChange('dark')}
               className={`min-h-[40px] rounded-lg px-4 py-2 text-sm ${theme === 'dark' ? 'bg-[#FF007F] text-white' : 'bg-white/10 text-muted-foreground hover:bg-white/15'}`}
             >
-              Dark
+              {t('settings.dark')}
             </button>
             <button
               type="button"
               onClick={() => handleThemeChange('light')}
               className={`min-h-[40px] rounded-lg px-4 py-2 text-sm ${theme === 'light' ? 'bg-[#FF007F] text-white' : 'bg-white/10 text-muted-foreground hover:bg-white/15'}`}
             >
-              Light
+              {t('settings.light')}
+            </button>
+          </div>
+        </div>
+        <div className="flex min-h-[44px] flex-wrap items-center justify-between gap-3">
+          <span className="text-sm font-medium text-foreground">{t('settings.language')}</span>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => handleLocaleChange('nl')}
+              className={`min-h-[40px] rounded-lg px-4 py-2 text-sm ${locale === 'nl' ? 'bg-[#FF007F] text-white' : 'bg-white/10 text-muted-foreground hover:bg-white/15'}`}
+            >
+              {t('settings.nl')}
+            </button>
+            <button
+              type="button"
+              onClick={() => handleLocaleChange('en')}
+              className={`min-h-[40px] rounded-lg px-4 py-2 text-sm ${locale === 'en' ? 'bg-[#FF007F] text-white' : 'bg-white/10 text-muted-foreground hover:bg-white/15'}`}
+            >
+              {t('settings.en')}
             </button>
           </div>
         </div>

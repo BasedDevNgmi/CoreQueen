@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useMemo } from 'react'
 import confetti from 'canvas-confetti'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowLeft, CheckCircle2, Info } from 'lucide-react'
@@ -6,11 +6,11 @@ import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import type { WorkoutDay } from '@/data/workouts'
-import type { ExerciseDatum } from '@/types/log'
 import { toExerciseData } from '@/data/workouts'
 import { LogSessionModal } from './LogSessionModal'
 import { ExerciseDetailSheet } from './ExerciseDetailSheet'
 import { getSoundEnabled } from '@/lib/settings'
+import { useTranslation } from '@/lib/i18n'
 import type { WorkoutExercise } from '@/data/workouts'
 
 function playCompletionFeedback() {
@@ -73,6 +73,7 @@ interface WorkoutViewProps {
 }
 
 export function WorkoutView({ day, onBack }: WorkoutViewProps) {
+  const { t } = useTranslation()
   const [completed, setCompleted] = useState<boolean[]>(
     day.exercises.map(() => false)
   )
@@ -112,8 +113,11 @@ export function WorkoutView({ day, onBack }: WorkoutViewProps) {
     [day.exercises.length]
   )
 
-  const exerciseData: ExerciseDatum[] = toExerciseData(day.exercises, completed)
-  const allDone = completed.every(Boolean)
+  const exerciseData = useMemo(
+    () => toExerciseData(day.exercises, completed),
+    [day.exercises, completed]
+  )
+  const allDone = useMemo(() => completed.every(Boolean), [completed])
 
   return (
     <motion.div
@@ -129,7 +133,7 @@ export function WorkoutView({ day, onBack }: WorkoutViewProps) {
           size="icon"
           onClick={onBack}
           className="shrink-0 text-muted-foreground hover:text-foreground"
-          aria-label="Back"
+          aria-label={t('workout.back')}
         >
           <ArrowLeft className="size-5" />
         </Button>
@@ -139,7 +143,7 @@ export function WorkoutView({ day, onBack }: WorkoutViewProps) {
 
       <Card className="border-white/10 bg-white/5 backdrop-blur-xl">
         <CardHeader>
-          <CardTitle className="text-white">Exercises</CardTitle>
+          <CardTitle className="text-white">{t('workout.exercises')}</CardTitle>
         </CardHeader>
         <CardContent>
           <motion.ul
@@ -208,7 +212,7 @@ export function WorkoutView({ day, onBack }: WorkoutViewProps) {
           onClick={() => setLogModalOpen(true)}
           disabled={!allDone}
         >
-          Log session
+          {t('workout.logSession')}
         </Button>
       </div>
 
@@ -238,7 +242,7 @@ export function WorkoutView({ day, onBack }: WorkoutViewProps) {
               exit={{ scale: 0.9 }}
               className="w-full max-w-sm rounded-2xl border border-white/10 bg-[#1a1a1a] px-6 py-6 text-center shadow-xl sm:px-8"
             >
-              <p className="text-muted-foreground">Rest</p>
+              <p className="text-muted-foreground">{t('workout.rest')}</p>
               <p className="mt-2 text-4xl font-black tabular-nums text-[#FF007F]">
                 {Math.floor((restSecondsLeft ?? 0) / 60)}:{(restSecondsLeft ?? 0) % 60 < 10 ? '0' : ''}{(restSecondsLeft ?? 0) % 60}
               </p>
@@ -248,7 +252,7 @@ export function WorkoutView({ day, onBack }: WorkoutViewProps) {
                 className="mt-4 border-white/20"
                 onClick={() => setRestSecondsLeft(null)}
               >
-                Skip
+                {t('workout.skip')}
               </Button>
             </motion.div>
           </motion.div>

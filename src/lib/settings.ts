@@ -1,6 +1,26 @@
 const REMINDER_TIME_KEY = 'corequeen_reminder_time'
 const SOUND_ENABLED_KEY = 'corequeen_sound_enabled'
 const THEME_KEY = 'corequeen_theme'
+const LOCALE_KEY = 'corequeen_locale'
+
+export type Locale = 'nl' | 'en'
+
+export function getLocale(): Locale {
+  try {
+    const v = localStorage.getItem(LOCALE_KEY)
+    return v === 'en' ? 'en' : 'nl'
+  } catch {
+    return 'nl'
+  }
+}
+
+export function setLocale(locale: Locale) {
+  try {
+    localStorage.setItem(LOCALE_KEY, locale)
+  } catch {
+    // ignore
+  }
+}
 
 export function getReminderTime(): string | null {
   try {

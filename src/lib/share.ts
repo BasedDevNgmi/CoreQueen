@@ -1,3 +1,5 @@
+import { t } from '@/lib/i18n'
+
 function formatShareDate(date: Date): string {
   const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -10,8 +12,8 @@ export function buildWorkoutSummaryText(opts: {
   date?: Date
 }): string {
   const date = opts.date ?? new Date()
-  const part = `CoreQueen – ${formatShareDate(date)} – ${opts.exerciseCount} exercises`
-  return opts.feeling ? `${part} – feeling ${opts.feeling}` : part
+  const part = `${t('share.appName')} – ${formatShareDate(date)} – ${opts.exerciseCount} ${t('share.exercises')}`
+  return opts.feeling ? `${part} – ${t('share.feeling')} ${opts.feeling}` : part
 }
 
 export async function shareWorkoutSummary(opts: {
@@ -23,7 +25,7 @@ export async function shareWorkoutSummary(opts: {
   if (typeof navigator !== 'undefined' && navigator.share) {
     try {
       await navigator.share({
-        title: 'CoreQueen',
+        title: t('share.appName'),
         text,
       })
       return

@@ -10,6 +10,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { useLogs } from '@/hooks/useLogs'
 import { shareWorkoutSummary } from '@/lib/share'
+import { useTranslation } from '@/lib/i18n'
 import type { ExerciseDatum } from '@/types/log'
 
 const FEELINGS = ['💪', '🔥', '✨', '😊', '😤', '👑']
@@ -27,6 +28,7 @@ export function LogSessionModal({
   exerciseData,
   onSuccess,
 }: LogSessionModalProps) {
+  const { t } = useTranslation()
   const [feeling, setFeeling] = useState<string>('')
   const [notes, setNotes] = useState('')
   const [loading, setLoading] = useState(false)
@@ -58,15 +60,15 @@ export function LogSessionModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="border-white/10 bg-popover text-foreground">
         <DialogHeader>
-          <DialogTitle className="text-white">Log session</DialogTitle>
+          <DialogTitle className="text-white">{t('logSession.title')}</DialogTitle>
           <DialogDescription>
-            How did you feel? Pick an emoji and add notes if you like.
+            {t('logSession.description')}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-2">
           <div>
-            <p className="mb-2 text-sm font-medium text-muted-foreground">Feeling</p>
+            <p className="mb-2 text-sm font-medium text-muted-foreground">{t('logSession.feeling')}</p>
             <div className="flex flex-wrap gap-2">
               {FEELINGS.map((emoji) => (
                 <button
@@ -87,13 +89,13 @@ export function LogSessionModal({
 
           <div>
             <label htmlFor="notes" className="mb-2 block text-sm font-medium text-muted-foreground">
-              Notes (optional)
+              {t('logSession.notes')}
             </label>
             <textarea
               id="notes"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="How did it go?"
+              placeholder={t('logSession.notesPlaceholder')}
               rows={3}
               className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-foreground placeholder:text-muted-foreground focus:border-[#FF007F] focus:outline-none focus:ring-2 focus:ring-[#FF007F]/30"
             />
@@ -110,14 +112,14 @@ export function LogSessionModal({
             onClick={() => onOpenChange(false)}
             className="min-h-[44px] flex-1 border-white/10 sm:flex-initial"
           >
-            Cancel
+            {t('logSession.cancel')}
           </Button>
           <Button
             className="min-h-[44px] flex-1 bg-[#FF007F] hover:bg-[#ff3399] sm:flex-initial"
             onClick={handleSubmit}
             disabled={loading}
           >
-            {loading ? 'Saving…' : 'Save'}
+            {loading ? t('logSession.saving') : t('logSession.save')}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -1,3 +1,7 @@
+import { t, getLocaleForIntl } from '@/lib/i18n'
+
+const DAY_KEYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as const
+
 /** Monday = 1, Tuesday = 2, ... Sunday = 7 (ISO weekday). */
 export function getISOWeekday(date: Date): number {
   const d = date.getDay()
@@ -20,8 +24,6 @@ export interface CalendarDay {
   isWorkoutDay: boolean
 }
 
-const DAY_LABELS = ['MA', 'DI', 'WO', 'DO', 'VR', 'ZA', 'ZO']
-
 /** Monday = 1, Wednesday = 3, Friday = 5 are workout days. */
 export function getWeekDays(weekStart: Date): CalendarDay[] {
   const days: CalendarDay[] = []
@@ -31,7 +33,7 @@ export function getWeekDays(weekStart: Date): CalendarDay[] {
     const weekday = getISOWeekday(date)
     days.push({
       date,
-      dayLabel: DAY_LABELS[i] ?? '',
+      dayLabel: t(`calendar.${DAY_KEYS[i]}`),
       weekday,
       isWorkoutDay: weekday === 1 || weekday === 3 || weekday === 5,
     })
@@ -43,16 +45,18 @@ export function getWeekDays(weekStart: Date): CalendarDay[] {
 export function formatWeekRange(weekStart: Date): string {
   const end = new Date(weekStart)
   end.setDate(weekStart.getDate() + 6)
+  const loc = getLocaleForIntl()
   const opts: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short', year: 'numeric' }
-  return `${weekStart.toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' })} – ${end.toLocaleDateString('nl-NL', opts)}`
+  return `${weekStart.toLocaleDateString(loc, { day: 'numeric', month: 'short' })} – ${end.toLocaleDateString(loc, opts)}`
 }
 
 /** Format for two-week range. */
 export function formatTwoWeekRange(weekStart: Date): string {
   const end = new Date(weekStart)
   end.setDate(weekStart.getDate() + 13)
+  const loc = getLocaleForIntl()
   const opts: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short', year: 'numeric' }
-  return `${weekStart.toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' })} – ${end.toLocaleDateString('nl-NL', opts)}`
+  return `${weekStart.toLocaleDateString(loc, { day: 'numeric', month: 'short' })} – ${end.toLocaleDateString(loc, opts)}`
 }
 
 /** YYYY-MM-DD in local timezone for comparing with log dates. */

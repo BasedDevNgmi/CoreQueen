@@ -4,6 +4,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import { useTranslation } from '@/lib/i18n'
 import type { WorkoutExercise } from '@/data/workouts'
 
 interface ExerciseDetailSheetProps {
@@ -17,6 +18,7 @@ export function ExerciseDetailSheet({
   open,
   onOpenChange,
 }: ExerciseDetailSheetProps) {
+  const { t } = useTranslation()
   if (!exercise) return null
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -29,7 +31,7 @@ export function ExerciseDetailSheet({
           {exercise.why && (
             <div>
               <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Waarom
+                {t('exerciseDetail.why')}
               </p>
               <p className="mt-1 text-foreground">{exercise.why}</p>
             </div>
@@ -37,7 +39,7 @@ export function ExerciseDetailSheet({
           {exercise.cues && exercise.cues.length > 0 && (
             <div>
               <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Cues
+                {t('exerciseDetail.cues')}
               </p>
               <ul className="mt-1 list-inside list-disc space-y-0.5 text-foreground">
                 {exercise.cues.map((c, i) => (

@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -9,14 +8,18 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import { useTranslation } from '@/lib/i18n'
 
 const TOUR_DONE_KEY = 'corequeen_tour_done'
 
-const STEPS = [
-  { title: 'Your week', body: 'This is your 3× per week schedule. Monday, Wednesday, and Friday are workout days.' },
-  { title: 'Tap to start', body: 'Tap a workout day to open your exercise list. Rest days are for recovery.' },
-  { title: 'Check off & log', body: 'Check off each exercise (with a little celebration!), then tap "Log session" to save how you feel.' },
-]
+function useTourSteps() {
+  const { t } = useTranslation()
+  return [
+    { titleKey: 'tour.step1Title' as const, bodyKey: 'tour.step1Body' as const },
+    { titleKey: 'tour.step2Title' as const, bodyKey: 'tour.step2Body' as const },
+    { titleKey: 'tour.step3Title' as const, bodyKey: 'tour.step3Body' as const },
+  ].map((s) => ({ title: t(s.titleKey), body: t(s.bodyKey) }))
+}
 
 interface OnboardingTourProps {
   open: boolean
@@ -24,8 +27,10 @@ interface OnboardingTourProps {
 }
 
 export function OnboardingTour({ open, onOpenChange }: OnboardingTourProps) {
+  const { t } = useTranslation()
+  const steps = useTourSteps()
   const [step, setStep] = useState(0)
-  const isLast = step === STEPS.length - 1
+  const isLast = step === steps.length - 1
 
   const handleNext = () => {
     if (isLast) {
@@ -44,12 +49,12 @@ export function OnboardingTour({ open, onOpenChange }: OnboardingTourProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="border-white/10 bg-[#1a1a1a] text-foreground">
         <DialogHeader>
-          <DialogTitle className="text-white">{STEPS[step].title}</DialogTitle>
-          <DialogDescription>{STEPS[step].body}</DialogDescription>
+          <DialogTitle className="text-white">{steps[step].title}</DialogTitle>
+          <DialogDescription>{steps[step].body}</DialogDescription>
         </DialogHeader>
         <div className="py-2">
           <div className="flex justify-center gap-1">
-            {STEPS.map((_, i) => (
+            {steps.map((_, i) => (
               <div
                 key={i}
                 className={`h-1.5 w-8 rounded-full transition ${
@@ -64,7 +69,7 @@ export function OnboardingTour({ open, onOpenChange }: OnboardingTourProps) {
             className="bg-[#FF007F] hover:bg-[#ff3399]"
             onClick={handleNext}
           >
-            {isLast ? 'Done' : 'Next'}
+            {isLast ? t('tour.done') : t('tour.next')}
           </Button>
         </DialogFooter>
       </DialogContent>

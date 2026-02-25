@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback, memo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowLeft, ChevronDown, ChevronUp, Download } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useLogs } from '@/hooks/useLogs'
+import { useTranslation } from '@/lib/i18n'
 import type { LogRow } from '@/types/log'
 
 function downloadBlob(blob: Blob, filename: string) {
@@ -14,10 +15,10 @@ function downloadBlob(blob: Blob, filename: string) {
   URL.revokeObjectURL(url)
 }
 
-function formatLogDate(iso: string | undefined): string {
+function formatLogDate(iso: string | undefined, localeForIntl: string): string {
   if (!iso) return ''
   const d = new Date(iso)
-  return d.toLocaleDateString('nl-NL', {
+  return d.toLocaleDateString(localeForIntl, {
     weekday: 'short',
     day: 'numeric',
     month: 'short',
@@ -27,17 +28,22 @@ function formatLogDate(iso: string | undefined): string {
   })
 }
 
-function LogCard({
+const LogCard = memo(function LogCard({
   log,
   expanded,
   onToggle,
+  exercisesLabel,
+  localeForIntl,
 }: {
   log: LogRow
   expanded: boolean
-  onToggle: () => void
+  onToggle: (id: string) => void
+  exercisesLabel: string
+  localeForIntl: string
 }) {
   const completed = log.exercise_data?.filter((e) => e.completed).length ?? 0
   const total = log.exercise_data?.length ?? 0
+  const logId = log.id ?? log.created_at ?? ''
   return (
     <motion.div
       layout
@@ -45,15 +51,15 @@ function LogCard({
     >
       <button
         type="button"
-        onClick={onToggle}
+        onClick={() => onToggle(logId)}
         className="flex min-h-[44px] w-full items-center justify-between gap-2 text-left"
       >
         <div className="flex min-w-0 flex-1 items-center gap-3">
           <span className="shrink-0 text-2xl">{log.feeling ?? '—'}</span>
           <div className="min-w-0">
-            <p className="truncate font-semibold text-foreground">{formatLogDate(log.created_at)}</p>
+            <p className="truncate font-semibold text-foreground">{formatLogDate(log.created_at, localeForIntl)}</p>
             <p className="text-sm text-muted-foreground">
-              {completed}/{total} exercises
+              {completed}/{total} {exercisesLabel}
             </p>
           </div>
         </div>
@@ -92,13 +98,14 @@ function LogCard({
       </AnimatePresence>
     </motion.div>
   )
-}
+})
 
 interface HistoryViewProps {
   onBack: () => void
 }
 
 export function HistoryView({ onBack }: HistoryViewProps) {
+  const { t, localeForIntl } = useTranslation()
   const [logs, setLogs] = useState<LogRow[]>([])
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
@@ -130,6 +137,10 @@ export function HistoryView({ onBack }: HistoryViewProps) {
     }
   }
 
+  const handleToggleExpanded = useCallback((id: string) => {
+    setExpandedId((prev) => (prev === id ? null : id))
+  }, [])
+
   useEffect(() => {
     let cancelled = false
     fetchLogs(50).then((data) => {
@@ -160,7 +171,7 @@ export function HistoryView({ onBack }: HistoryViewProps) {
         >
           <ArrowLeft className="size-5" />
         </Button>
-        <h2 className="min-w-0 flex-1 text-center text-lg font-bold text-foreground sm:text-xl">History</h2>
+        <h2 className="min-w-0 flex-1 text-center text-lg font-bold text-foreground sm:text-xl">{t('history.title')}</h2>
         <div className="flex shrink-0 gap-2">
           <Button
             variant="ghost"
@@ -170,7 +181,7 @@ export function HistoryView({ onBack }: HistoryViewProps) {
             disabled={exporting || logs.length === 0}
           >
             <Download className="mr-1 size-4" />
-            JSON
+            {t('history.json')}
           </Button>
           <Button
             variant="ghost"
@@ -179,15 +190,15 @@ export function HistoryView({ onBack }: HistoryViewProps) {
             onClick={() => handleExport('csv')}
             disabled={exporting || logs.length === 0}
           >
-            CSV
+            {t('history.csv')}
           </Button>
         </div>
       </div>
 
       {loading ? (
-        <p className="py-8 text-center text-muted-foreground">Loading…</p>
+        <p className="py-8 text-center text-muted-foreground">{t('history.loading')}</p>
       ) : logs.length === 0 ? (
-        <p className="py-8 text-center text-muted-foreground">No sessions yet. Log a workout to see it here.</p>
+        <p className="py-8 text-center text-muted-foreground">{t('history.empty')}</p>
       ) : (
         <ul className="space-y-3 pb-4">
           {logs.map((log) => (
@@ -195,11 +206,9 @@ export function HistoryView({ onBack }: HistoryViewProps) {
               <LogCard
                 log={log}
                 expanded={expandedId === (log.id ?? log.created_at ?? '')}
-                onToggle={() =>
-                  setExpandedId((id) =>
-                    id === (log.id ?? log.created_at ?? '') ? null : (log.id ?? log.created_at ?? '')
-                  )
-                }
+                onToggle={handleToggleExpanded}
+                exercisesLabel={t('history.exercises')}
+                localeForIntl={localeForIntl}
               />
             </li>
           ))}

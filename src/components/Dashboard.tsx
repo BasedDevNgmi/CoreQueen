@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight, CheckCircle2, Circle, Dumbbell, History, HelpCircle, Settings } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import {
   getWeekStart,
   getWeekDays,
@@ -12,6 +13,7 @@ import {
 import { useLogs } from '@/hooks/useLogs'
 import { computeStreakAndMonth } from '@/lib/stats'
 import { getReminderTime } from '@/lib/settings'
+import { useTranslation } from '@/lib/i18n'
 import type { WorkoutDay } from '@/data/workouts'
 
 const REMINDER_DISMISSED_KEY = 'corequeen_reminder_dismissed'
@@ -70,6 +72,7 @@ interface DashboardProps {
 }
 
 export function Dashboard({ schedule, onSelectDay, onOpenHistory, onOpenTour, onOpenSettings }: DashboardProps) {
+  const { t } = useTranslation()
   const [weekStart, setWeekStart] = useState(() => getWeekStart(new Date()))
   const [completedDates, setCompletedDates] = useState<Set<string>>(new Set())
   const [stats, setStats] = useState<{ workoutsThisMonth: number; currentStreakWeeks: number } | null>(null)
@@ -80,11 +83,6 @@ export function Dashboard({ schedule, onSelectDay, onOpenHistory, onOpenTour, on
   useEffect(() => {
     setShowReminder(shouldShowReminder())
   }, [])
-
-  const days = getWeekDays(weekStart)
-  const nextWeekStart = new Date(weekStart)
-  nextWeekStart.setDate(weekStart.getDate() + 7)
-  const daysWeek2 = twoWeeks ? getWeekDays(nextWeekStart) : []
 
   useEffect(() => {
     let cancelled = false
@@ -120,20 +118,34 @@ export function Dashboard({ schedule, onSelectDay, onOpenHistory, onOpenTour, on
     setWeekStart(next)
   }
 
-  const handleDayClick = (day: CalendarDay) => {
-    if (day.isWorkoutDay) {
-      const idx = getScheduleIndexForWeekday(day.weekday)
-      if (idx !== null && schedule[idx]) onSelectDay(schedule[idx])
-    }
-  }
+  const handleDayClick = useCallback(
+    (day: CalendarDay) => {
+      if (day.isWorkoutDay) {
+        const idx = getScheduleIndexForWeekday(day.weekday)
+        if (idx !== null && schedule[idx]) onSelectDay(schedule[idx])
+      }
+    },
+    [schedule, onSelectDay]
+  )
 
-  const handleLogRest = async (day: CalendarDay) => {
+  const handleLogRest = useCallback(async (_day: CalendarDay) => {
     await insertLog([], 'Rest')
     const end = new Date(weekStart)
     end.setDate(weekStart.getDate() + (twoWeeks ? 13 : 6))
     const { completedDates: set } = await fetchLogsForDateRange(weekStart, end)
     setCompletedDates(set)
-  }
+  }, [insertLog, fetchLogsForDateRange, weekStart, twoWeeks])
+
+  const days = useMemo(() => getWeekDays(weekStart), [weekStart])
+  const nextWeekStart = useMemo(() => {
+    const d = new Date(weekStart)
+    d.setDate(weekStart.getDate() + 7)
+    return d
+  }, [weekStart])
+  const daysWeek2 = useMemo(
+    () => (twoWeeks ? getWeekDays(nextWeekStart) : []),
+    [twoWeeks, nextWeekStart]
+  )
 
   return (
     <motion.div
@@ -144,9 +156,9 @@ export function Dashboard({ schedule, onSelectDay, onOpenHistory, onOpenTour, on
     >
       <motion.div variants={item} className="mb-6 flex flex-col items-center gap-2 text-center sm:mb-8">
         <h1 className="text-2xl font-black tracking-tight text-foreground sm:text-3xl md:text-4xl">
-          CoreQueen
+          {t('dashboard.title')}
         </h1>
-        <p className="mt-1 text-sm text-muted-foreground sm:mt-2 sm:text-base">3× per week — controle & ademhaling</p>
+        <p className="mt-1 text-sm text-muted-foreground sm:mt-2 sm:text-base">{t('dashboard.subtitle')}</p>
         <div className="flex flex-wrap items-center justify-center gap-1 sm:gap-2">
           {onOpenHistory && (
             <Button
@@ -156,7 +168,7 @@ export function Dashboard({ schedule, onSelectDay, onOpenHistory, onOpenTour, on
               onClick={onOpenHistory}
             >
               <History className="mr-2 size-4" />
-              History
+              {t('dashboard.history')}
             </Button>
           )}
           {onOpenTour && (
@@ -165,7 +177,7 @@ export function Dashboard({ schedule, onSelectDay, onOpenHistory, onOpenTour, on
               size="icon"
               className="text-muted-foreground hover:text-[#FF007F]"
               onClick={onOpenTour}
-              aria-label="Tour"
+              aria-label={t('dashboard.tour')}
             >
               <HelpCircle className="size-4" />
             </Button>
@@ -176,7 +188,7 @@ export function Dashboard({ schedule, onSelectDay, onOpenHistory, onOpenTour, on
               size="icon"
               className="text-muted-foreground hover:text-[#FF007F]"
               onClick={onOpenSettings}
-              aria-label="Settings"
+              aria-label={t('dashboard.settings')}
             >
               <Settings className="size-4" />
             </Button>
@@ -189,7 +201,7 @@ export function Dashboard({ schedule, onSelectDay, onOpenHistory, onOpenTour, on
           variants={item}
           className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-[#FF007F]/40 bg-[#FF007F]/10 px-4 py-3"
         >
-          <span className="font-semibold text-foreground">Time for your workout!</span>
+          <span className="font-semibold text-foreground">{t('dashboard.reminderTitle')}</span>
           <Button
             size="sm"
             variant="ghost"
@@ -203,7 +215,7 @@ export function Dashboard({ schedule, onSelectDay, onOpenHistory, onOpenTour, on
               setShowReminder(false)
             }}
           >
-            Dismiss
+            {t('dashboard.dismiss')}
           </Button>
         </motion.div>
       )}
@@ -215,11 +227,11 @@ export function Dashboard({ schedule, onSelectDay, onOpenHistory, onOpenTour, on
         >
           {stats.currentStreakWeeks > 0 && (
             <span className="text-sm font-semibold text-[#FF007F]">
-              {stats.currentStreakWeeks} week{stats.currentStreakWeeks !== 1 ? 's' : ''} in a row
+              {stats.currentStreakWeeks} {stats.currentStreakWeeks === 1 ? t('dashboard.weekInRow') : t('dashboard.weeksInRow')}
             </span>
           )}
           <span className="text-sm text-muted-foreground">
-            {stats.workoutsThisMonth} workouts this month
+            {stats.workoutsThisMonth} {t('dashboard.workoutsThisMonth')}
           </span>
         </motion.div>
       )}
@@ -232,7 +244,7 @@ export function Dashboard({ schedule, onSelectDay, onOpenHistory, onOpenTour, on
           type="button"
           onClick={goPrev}
           className="min-h-[44px] min-w-[44px] rounded-lg p-2 text-foreground/80 transition hover:bg-white/10 hover:text-foreground"
-          aria-label="Vorige week"
+          aria-label={t('dashboard.prevWeek')}
         >
           <ChevronLeft className="size-6" />
         </button>
@@ -244,13 +256,13 @@ export function Dashboard({ schedule, onSelectDay, onOpenHistory, onOpenTour, on
           onClick={() => setTwoWeeks((w) => !w)}
           className="min-h-[44px] rounded-lg px-3 py-2 text-xs text-muted-foreground hover:bg-white/10 hover:text-foreground sm:px-2 sm:py-1"
         >
-          {twoWeeks ? '1 week' : '2 weeks'}
+          {twoWeeks ? t('dashboard.oneWeek') : t('dashboard.twoWeeks')}
         </button>
         <button
           type="button"
           onClick={goNext}
           className="min-h-[44px] min-w-[44px] rounded-lg p-2 text-foreground/80 transition hover:bg-white/10 hover:text-foreground"
-          aria-label="Volgende week"
+          aria-label={t('dashboard.nextWeek')}
         >
           <ChevronRight className="size-6" />
         </button>
@@ -286,7 +298,7 @@ export function Dashboard({ schedule, onSelectDay, onOpenHistory, onOpenTour, on
                     <div className="mb-2 flex items-center justify-between">
                       <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                         {day.dayLabel} | {day.date.getDate()}
-                        {isToday ? ' · Vandaag' : ''}
+                        {isToday ? ` · ${t('dashboard.today')}` : ''}
                       </span>
                       {day.isWorkoutDay ? (
                         completed ? (
@@ -302,22 +314,22 @@ export function Dashboard({ schedule, onSelectDay, onOpenHistory, onOpenTour, on
                       {day.isWorkoutDay ? (
                         <>
                           <Dumbbell className="size-4 shrink-0 text-[#FF007F]" />
-                          <span className="font-semibold text-foreground">Workout</span>
+                          <span className="font-semibold text-foreground">{t('dashboard.workout')}</span>
                         </>
                       ) : (
                         <>
-                          <span className="text-sm text-muted-foreground">Rest day</span>
+                          <span className="text-sm text-muted-foreground">{t('dashboard.restDay')}</span>
                           {!completed && (
                             <Button
                               size="sm"
                               variant="ghost"
                               className="min-h-[36px] shrink-0 text-xs text-[#FF007F] hover:bg-[#FF007F]/20"
-                              onClick={(e) => {
+                              onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                                 e.stopPropagation()
                                 handleLogRest(day)
                               }}
                             >
-                              Log rest
+                              {t('dashboard.logRest')}
                             </Button>
                           )}
                         </>

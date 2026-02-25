@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { Dashboard } from '@/components/Dashboard'
 import { WorkoutView } from '@/components/WorkoutView'
@@ -9,10 +9,12 @@ import type { WorkoutDay } from '@/data/workouts'
 import { flushPendingLogs, getPendingCount } from '@/lib/offlineLogs'
 import { Button } from '@/components/ui/button'
 import { OnboardingTour, shouldShowTour } from '@/components/OnboardingTour'
+import { useTranslation } from '@/lib/i18n'
 
 type View = 'dashboard' | 'workout' | 'history' | 'settings'
 
 function App() {
+  const { t } = useTranslation()
   const [view, setView] = useState<View>('dashboard')
   const [selectedDay, setSelectedDay] = useState<WorkoutDay | null>(null)
   const [pendingCount, setPendingCount] = useState(() => getPendingCount())
@@ -22,17 +24,18 @@ function App() {
     if (shouldShowTour()) setTourOpen(true)
   }, [])
 
-  useEffect(() => {
+  const refreshPendingCount = useCallback(() => {
     flushPendingLogs().then((r) => setPendingCount(r.remaining))
   }, [])
 
   useEffect(() => {
-    const onOnline = () => {
-      flushPendingLogs().then((r) => setPendingCount(r.remaining))
-    }
-    window.addEventListener('online', onOnline)
-    return () => window.removeEventListener('online', onOnline)
-  }, [])
+    refreshPendingCount()
+  }, [refreshPendingCount])
+
+  useEffect(() => {
+    window.addEventListener('online', refreshPendingCount)
+    return () => window.removeEventListener('online', refreshPendingCount)
+  }, [refreshPendingCount])
 
   useEffect(() => {
     const onPendingChange = () => setPendingCount(getPendingCount())
@@ -40,27 +43,32 @@ function App() {
     return () => window.removeEventListener('corequeen_pending_change', onPendingChange)
   }, [])
 
-  const handleSyncNow = () => {
-    flushPendingLogs().then((r) => setPendingCount(r.remaining))
-  }
+  const handleSyncNow = refreshPendingCount
 
-  const handleSelectDay = (day: WorkoutDay) => {
+  const handleSelectDay = useCallback((day: WorkoutDay) => {
     setSelectedDay(day)
     setView('workout')
-  }
+  }, [])
 
-  const handleBack = () => {
+  const handleBack = useCallback(() => {
     setView('dashboard')
     setSelectedDay(null)
-  }
+  }, [])
+
+  const handleOpenHistory = useCallback(() => setView('history'), [])
+  const handleOpenTour = useCallback(() => setTourOpen(true), [])
+  const handleOpenSettings = useCallback(() => setView('settings'), [])
+  const handleBackToDashboard = useCallback(() => setView('dashboard'), [])
 
   return (
     <div className="min-h-screen min-h-[100dvh] bg-background pt-[env(safe-area-inset-top)]">
       {pendingCount > 0 && (
         <div className="flex flex-wrap items-center justify-between gap-2 bg-[#FF007F]/20 px-4 py-2 text-sm text-white sm:flex-nowrap">
-          <span className="min-w-0 flex-1">{pendingCount} log{pendingCount !== 1 ? 's' : ''} pending — will sync when online</span>
+          <span className="min-w-0 flex-1">
+            {pendingCount === 1 ? t('app.pendingLogsOne') : `${pendingCount} ${t('app.pendingLogsMany')}`}
+          </span>
           <Button size="sm" variant="outline" className="shrink-0 border-white/30" onClick={handleSyncNow}>
-            Sync now
+            {t('app.syncNow')}
           </Button>
         </div>
       )}
@@ -71,9 +79,9 @@ function App() {
             key="dashboard"
             schedule={WORKOUT_SCHEDULE}
             onSelectDay={handleSelectDay}
-            onOpenHistory={() => setView('history')}
-            onOpenTour={() => setTourOpen(true)}
-            onOpenSettings={() => setView('settings')}
+            onOpenHistory={handleOpenHistory}
+            onOpenTour={handleOpenTour}
+            onOpenSettings={handleOpenSettings}
           />
         )}
         {view === 'workout' && selectedDay && (
@@ -84,10 +92,10 @@ function App() {
           />
         )}
         {view === 'history' && (
-          <HistoryView key="history" onBack={() => setView('dashboard')} />
+          <HistoryView key="history" onBack={handleBackToDashboard} />
         )}
         {view === 'settings' && (
-          <SettingsView key="settings" onBack={() => setView('dashboard')} />
+          <SettingsView key="settings" onBack={handleBackToDashboard} />
         )}
         </AnimatePresence>
       </main>

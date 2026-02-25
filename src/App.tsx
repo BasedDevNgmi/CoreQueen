@@ -17,6 +17,8 @@ import { flushPendingLogs, getPendingCount } from '@/lib/offlineLogs'
 import { Button } from '@/components/ui/button'
 import { OnboardingTour, shouldShowTour } from '@/components/OnboardingTour'
 import { useTranslation } from '@/lib/i18n'
+import { VibeCheckModal } from '@/components/VibeCheckModal'
+import { RESTORATIVE_FLOW } from '@/data/workouts'
 
 type View = 'dashboard' | 'workout' | 'history' | 'settings'
 
@@ -26,6 +28,8 @@ function App() {
   const [selectedDay, setSelectedDay] = useState<WorkoutDay | null>(null)
   const [pendingCount, setPendingCount] = useState(() => getPendingCount())
   const [tourOpen, setTourOpen] = useState(false)
+  const [vibeCheckOpen, setVibeCheckOpen] = useState(false)
+  const [pendingWorkoutDay, setPendingWorkoutDay] = useState<WorkoutDay | null>(null)
 
   useEffect(() => {
     if (shouldShowTour()) setTourOpen(true)
@@ -50,9 +54,26 @@ function App() {
   const handleSyncNow = refreshPendingCount
 
   const handleSelectDay = useCallback((day: WorkoutDay) => {
-    setSelectedDay(day)
-    setView('workout')
+    setPendingWorkoutDay(day)
+    setVibeCheckOpen(true)
   }, [])
+
+  const handleVibeComplete = useCallback((vibe: 'drained' | 'balanced' | 'unstoppable') => {
+    setVibeCheckOpen(false)
+    if (!pendingWorkoutDay) return
+
+    if (vibe === 'drained') {
+      setSelectedDay({
+        ...pendingWorkoutDay,
+        label: t('app.restorativeSession'),
+        exercises: RESTORATIVE_FLOW,
+      })
+    } else {
+      setSelectedDay(pendingWorkoutDay)
+    }
+    setView('workout')
+    setPendingWorkoutDay(null)
+  }, [pendingWorkoutDay, t])
 
   const handleBack = useCallback(() => {
     setView('dashboard')
@@ -80,31 +101,32 @@ function App() {
         <Suspense fallback={<div className="flex min-h-[50vh] items-center justify-center text-muted-foreground">Loading…</div>}>
           <AnimatePresence mode="wait">
             {view === 'dashboard' && (
-            <Dashboard
-            key="dashboard"
-            schedule={WORKOUT_SCHEDULE}
-            onSelectDay={handleSelectDay}
-            onOpenHistory={handleOpenHistory}
-            onOpenTour={handleOpenTour}
-            onOpenSettings={handleOpenSettings}
-          />
-        )}
-        {view === 'workout' && selectedDay && (
-          <WorkoutView
-            key={selectedDay.id}
-            day={selectedDay}
-            onBack={handleBack}
-          />
-        )}
-        {view === 'history' && (
-          <HistoryView key="history" onBack={handleBackToDashboard} />
-        )}
-        {view === 'settings' && (
-          <SettingsView key="settings" onBack={handleBackToDashboard} />
-        )}
+              <Dashboard
+                key="dashboard"
+                schedule={WORKOUT_SCHEDULE}
+                onSelectDay={handleSelectDay}
+                onOpenHistory={handleOpenHistory}
+                onOpenTour={handleOpenTour}
+                onOpenSettings={handleOpenSettings}
+              />
+            )}
+            {view === 'workout' && selectedDay && (
+              <WorkoutView
+                key={selectedDay.id}
+                day={selectedDay}
+                onBack={handleBack}
+              />
+            )}
+            {view === 'history' && (
+              <HistoryView key="history" onBack={handleBackToDashboard} />
+            )}
+            {view === 'settings' && (
+              <SettingsView key="settings" onBack={handleBackToDashboard} />
+            )}
           </AnimatePresence>
         </Suspense>
       </main>
+      <VibeCheckModal open={vibeCheckOpen} onComplete={handleVibeComplete} />
       <OnboardingTour open={tourOpen} onOpenChange={setTourOpen} />
     </div>
   )

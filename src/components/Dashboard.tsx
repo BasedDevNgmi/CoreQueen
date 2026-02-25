@@ -191,11 +191,12 @@ export function Dashboard({ schedule, onSelectDay, onOpenHistory, onOpenTour, on
       initial="hidden"
       animate="show"
     >
-      <motion.div variants={item} className="mb-6 flex flex-col items-center gap-1.5 text-center sm:mb-8 sm:gap-2">
+      <motion.div variants={item} className="mb-12 flex flex-col items-center gap-2 text-center sm:mb-16">
+        <p className="font-sans text-sm tracking-[0.2em] text-primary uppercase">{t('dashboard.subtitle')}</p>
         <h1
-          className="font-display text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl md:text-4xl"
+          className="font-display text-5xl font-black italic tracking-tight text-foreground sm:text-7xl"
           style={{
-            background: 'linear-gradient(135deg, #fff 0%, #F5EEF0 40%, #E0A9A5 100%)',
+            background: 'linear-gradient(135deg, #fff 0%, #F5EEF0 40%, #DAA8CE 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
@@ -203,8 +204,7 @@ export function Dashboard({ schedule, onSelectDay, onOpenHistory, onOpenTour, on
         >
           {t('dashboard.title')}
         </h1>
-        <p className="text-xs text-muted-foreground sm:text-sm">{t('dashboard.subtitle')}</p>
-        <div className="flex flex-wrap items-center justify-center gap-1 sm:gap-2">
+        <div className="flex flex-wrap items-center justify-center gap-1 sm:gap-2 mt-4">
           {onOpenHistory && (
             <Button
               variant="ghost"
@@ -283,15 +283,14 @@ export function Dashboard({ schedule, onSelectDay, onOpenHistory, onOpenTour, on
 
       <motion.div
         variants={item}
-        className="flex flex-wrap items-center justify-center gap-2 sm:gap-4"
+        className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 my-8"
       >
         <motion.button
           type="button"
           onClick={calendarView === 'day' ? goPrevDay : calendarView === 'month' ? goPrevMonth : goPrevWeek}
-          className="min-h-[44px] min-w-[44px] rounded-lg p-2 text-foreground/80 transition hover:bg-white/10 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.98 }}
-          transition={{ type: 'tween', duration: 0.2 }}
+          className="min-h-[56px] min-w-[56px] rounded-full p-2 text-foreground/60 transition hover:bg-white/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
           aria-label={
             calendarView === 'day'
               ? t('dashboard.prevDay')
@@ -300,22 +299,23 @@ export function Dashboard({ schedule, onSelectDay, onOpenHistory, onOpenTour, on
                 : t('dashboard.prevWeek')
           }
         >
-          <ChevronLeft className="size-6" />
+          <ChevronLeft className="size-8 stroke-[1.5]" />
         </motion.button>
-        <span className="min-w-0 flex-1 shrink-0 text-center text-sm font-medium tabular-nums text-foreground sm:min-w-[180px] sm:flex-none sm:text-base">
+
+        <span className="font-display italic text-3xl font-medium text-foreground sm:text-5xl">
           {calendarView === 'day'
             ? formatDayHeader(focusedDate)
             : calendarView === 'month'
               ? formatMonthTitle(monthStart)
               : formatWeekRange(weekStart)}
         </span>
+
         <motion.button
           type="button"
           onClick={calendarView === 'day' ? goNextDay : calendarView === 'month' ? goNextMonth : goNextWeek}
-          className="min-h-[44px] min-w-[44px] rounded-lg p-2 text-foreground/80 transition hover:bg-white/10 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.98 }}
-          transition={{ type: 'tween', duration: 0.2 }}
+          className="min-h-[56px] min-w-[56px] rounded-full p-2 text-foreground/60 transition hover:bg-white/5 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
           aria-label={
             calendarView === 'day'
               ? t('dashboard.nextDay')
@@ -324,7 +324,7 @@ export function Dashboard({ schedule, onSelectDay, onOpenHistory, onOpenTour, on
                 : t('dashboard.nextWeek')
           }
         >
-          <ChevronRight className="size-6" />
+          <ChevronRight className="size-8 stroke-[1.5]" />
         </motion.button>
       </motion.div>
 
@@ -345,8 +345,8 @@ export function Dashboard({ schedule, onSelectDay, onOpenHistory, onOpenTour, on
                   layoutId="segment-pill"
                   className="absolute inset-0 z-0 rounded-xl"
                   style={{
-                    background: 'linear-gradient(135deg, #E0A9A5 0%, #D17A8A 50%, #B85F71 100%)',
-                    boxShadow: '0 0 20px rgba(224, 169, 165, 0.35), inset 0 1px 0 rgba(255,255,255,0.15)',
+                    background: 'linear-gradient(135deg, #DAA8CE 0%, #D49BB8 50%, #B298CD 100%)',
+                    boxShadow: '0 0 20px rgba(218, 168, 206, 0.4), inset 0 1px 0 rgba(255,255,255,0.2)',
                   }}
                   transition={{ type: 'tween', duration: 0.22 }}
                 />

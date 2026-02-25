@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowLeft, CheckCircle2, Info } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { CardContent } from '@/components/ui/card'
 import type { WorkoutDay } from '@/data/workouts'
 import { toExerciseData } from '@/data/workouts'
 import { LogSessionModal } from './LogSessionModal'
@@ -127,7 +127,7 @@ export function WorkoutView({ day, onBack }: WorkoutViewProps) {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2 }}
     >
-      <div className="mb-4 flex min-h-[44px] items-center justify-between gap-2 sm:mb-6">
+      <div className="mb-8 flex min-h-[44px] items-center justify-between gap-2 sm:mb-10">
         <Button
           variant="ghost"
           size="icon"
@@ -135,16 +135,16 @@ export function WorkoutView({ day, onBack }: WorkoutViewProps) {
           className="shrink-0 text-muted-foreground hover:text-foreground"
           aria-label={t('workout.back')}
         >
-          <ArrowLeft className="size-5" />
+          <ArrowLeft className="size-6 stroke-[1.5]" />
         </Button>
-        <h2 className="min-w-0 truncate text-center text-lg font-bold text-foreground sm:text-xl">{day.label}</h2>
-        <div className="w-9 shrink-0" />
+        <h2 className="min-w-0 font-display italic text-3xl font-bold tracking-tight text-foreground sm:text-5xl">{day.label}</h2>
+        <div className="w-10 shrink-0" />
       </div>
 
-      <Card className="border-white/10 bg-white/5 backdrop-blur-xl">
-        <CardHeader>
-          <CardTitle className="text-white">{t('workout.exercises')}</CardTitle>
-        </CardHeader>
+      <div className="card-glass rounded-3xl p-4 sm:p-6 mb-8">
+        <div className="mb-6 px-2">
+          <h3 className="text-sm tracking-[0.2em] uppercase text-primary font-semibold">{t('workout.exercises')}</h3>
+        </div>
         <CardContent>
           <motion.ul
             className="space-y-2 sm:space-y-3"
@@ -203,7 +203,7 @@ export function WorkoutView({ day, onBack }: WorkoutViewProps) {
             </AnimatePresence>
           </motion.ul>
         </CardContent>
-      </Card>
+      </div>
 
       <div className="flex justify-end">
         <Button

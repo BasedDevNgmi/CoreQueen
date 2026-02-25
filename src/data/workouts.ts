@@ -47,6 +47,34 @@ const CORE_WORKOUT: WorkoutExercise[] = [
   },
 ]
 
+/** Gentle restorative flow if the user lacks energy */
+export const RESTORATIVE_FLOW: WorkoutExercise[] = [
+  {
+    name: 'Child\'s Pose',
+    setsReps: '2 min',
+    why: 'Ontspant de ademhaling en verlengt de wervelkolom.',
+    cues: ['Adem naar je onderrug', 'Laat spanning los'],
+  },
+  {
+    name: 'Cat-Cow',
+    setsReps: '10-15 herhalingen',
+    why: 'Maakt de wervelkolom soepel en verlicht spanning.',
+    cues: ['Beweeg op je adem', 'Blijf in je comfortzone'],
+  },
+  {
+    name: 'Supine Twist',
+    setsReps: '1 min per kant',
+    why: 'Milde rotatie om de ruggengraat te voeden.',
+    cues: ['Houd beide schouders op de vloer', 'Ontspan in de draai'],
+  },
+  {
+    name: 'Savasana (Corpse Pose)',
+    setsReps: '3-5 min',
+    why: 'Volledige rust om het lichaam te laten integreren.',
+    cues: ['Voel het gewicht van je lichaam', 'Geen inspanning meer'],
+  },
+]
+
 export const WORKOUT_SCHEDULE: WorkoutDay[] = [
   { id: 'ma', label: 'Maandag', exercises: CORE_WORKOUT },
   { id: 'wo', label: 'Woensdag', exercises: CORE_WORKOUT },

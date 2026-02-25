@@ -364,8 +364,8 @@ export function Dashboard({ schedule, onSelectDay, onOpenHistory, onOpenTour, on
             key="day"
             className="mx-auto max-w-md"
             variants={container}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            initial="hidden"
+            animate="show"
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
           >
@@ -378,8 +378,8 @@ export function Dashboard({ schedule, onSelectDay, onOpenHistory, onOpenTour, on
             key="week"
             className="grid grid-cols-2 gap-3 sm:grid-cols-4 md:grid-cols-7"
             variants={container}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            initial="hidden"
+            animate="show"
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
           >
@@ -396,8 +396,8 @@ export function Dashboard({ schedule, onSelectDay, onOpenHistory, onOpenTour, on
             key="month"
             className="grid grid-cols-7 gap-1.5 sm:gap-2"
             variants={container}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            initial="hidden"
+            animate="show"
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
           >

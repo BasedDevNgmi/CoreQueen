@@ -83,7 +83,7 @@ interface DashboardProps {
 export type CalendarViewMode = 'day' | 'week' | 'month'
 
 export function Dashboard({ schedule, onSelectDay, onOpenHistory, onOpenTour, onOpenSettings }: DashboardProps) {
-  const { t, locale } = useTranslation()
+  const { t } = useTranslation()
   const [calendarView, setCalendarView] = useState<CalendarViewMode>('week')
   const [weekStart, setWeekStart] = useState(() => getWeekStart(new Date()))
   const [focusedDate, setFocusedDate] = useState(() => new Date())
@@ -170,18 +170,18 @@ export function Dashboard({ schedule, onSelectDay, onOpenHistory, onOpenTour, on
     return { start, end }
   }, [calendarView, focusedDate, weekStart, monthStart])
 
-  const handleLogRest = useCallback(async (_day: CalendarDay) => {
+  const handleLogRest = useCallback(async () => {
     await insertLog([], 'Rest')
     const { start, end } = getVisibleRange()
     const { completedDates: set } = await fetchLogsForDateRange(start, end)
     setCompletedDates(set)
   }, [insertLog, fetchLogsForDateRange, getVisibleRange])
 
-  const days = useMemo(() => getWeekDays(weekStart), [weekStart, locale])
-  const focusedDay = useMemo(() => getCalendarDay(focusedDate), [focusedDate, locale])
+  const days = useMemo(() => getWeekDays(weekStart), [weekStart])
+  const focusedDay = useMemo(() => getCalendarDay(focusedDate), [focusedDate])
   const monthGrid = useMemo(
     () => (calendarView === 'month' ? getMonthGrid(monthStart) : []),
-    [calendarView, monthStart, locale]
+    [calendarView, monthStart]
   )
 
   return (
@@ -195,7 +195,7 @@ export function Dashboard({ schedule, onSelectDay, onOpenHistory, onOpenTour, on
         <h1
           className="font-display text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl md:text-4xl"
           style={{
-            background: 'linear-gradient(135deg, #fff 0%, #f0e6ec 40%, #ffcce8 100%)',
+            background: 'linear-gradient(135deg, #fff 0%, #F5EEF0 40%, #E0A9A5 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
@@ -244,7 +244,7 @@ export function Dashboard({ schedule, onSelectDay, onOpenHistory, onOpenTour, on
       {showReminder && (
         <motion.div
           variants={item}
-          className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-primary/40 bg-primary/10 px-4 py-3 shadow-[0_0_20px_rgba(255,0,127,0.12)]"
+          className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-primary/40 bg-primary/10 px-4 py-3 shadow-[0_0_20px_rgba(224,169,165,0.12)]"
         >
           <span className="font-semibold text-foreground">{t('dashboard.reminderTitle')}</span>
           <Button
@@ -268,7 +268,7 @@ export function Dashboard({ schedule, onSelectDay, onOpenHistory, onOpenTour, on
       {stats && (stats.workoutsThisMonth > 0 || stats.currentStreakWeeks > 0) && (
         <motion.div
           variants={item}
-          className="flex flex-wrap justify-center gap-4 rounded-2xl border border-primary/20 bg-white/5 px-4 py-3 backdrop-blur-xl shadow-[0_0_16px_rgba(255,0,127,0.08)] sm:gap-6"
+          className="flex flex-wrap justify-center gap-4 rounded-2xl border border-primary/20 bg-white/5 px-4 py-3 backdrop-blur-xl shadow-[0_0_16px_rgba(224,169,165,0.08)] sm:gap-6"
         >
           {stats.currentStreakWeeks > 0 && (
             <span className="text-sm font-semibold text-primary">
@@ -335,19 +335,18 @@ export function Dashboard({ schedule, onSelectDay, onOpenHistory, onOpenTour, on
               key={mode}
               type="button"
               onClick={() => setCalendarView(mode)}
-              className={`relative z-10 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
-                calendarView === mode
-                  ? 'text-primary-foreground'
-                  : 'text-muted-foreground hover:bg-white/10 hover:text-foreground'
-              }`}
+              className={`relative z-10 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background ${calendarView === mode
+                ? 'text-primary-foreground'
+                : 'text-muted-foreground hover:bg-white/10 hover:text-foreground'
+                }`}
             >
               {calendarView === mode && (
                 <motion.span
                   layoutId="segment-pill"
                   className="absolute inset-0 z-0 rounded-xl"
                   style={{
-                    background: 'linear-gradient(135deg, #FF007F 0%, #e60073 50%, #cc0066 100%)',
-                    boxShadow: '0 0 20px rgba(255, 0, 127, 0.35), inset 0 1px 0 rgba(255,255,255,0.15)',
+                    background: 'linear-gradient(135deg, #E0A9A5 0%, #D17A8A 50%, #B85F71 100%)',
+                    boxShadow: '0 0 20px rgba(224, 169, 165, 0.35), inset 0 1px 0 rgba(255,255,255,0.15)',
                   }}
                   transition={{ type: 'tween', duration: 0.22 }}
                 />
@@ -419,17 +418,14 @@ export function Dashboard({ schedule, onSelectDay, onOpenHistory, onOpenTour, on
     const isClickable = isWorkoutClickable || isRestClickable
     const isToday = toDateString(day.date) === toDateString(new Date())
     const CardWrap = isClickable ? motion.button : motion.div
-    const baseClass = `relative flex w-full flex-col justify-center rounded-2xl border border-white/10 bg-white/5 text-left backdrop-blur-xl transition-all duration-200 card-glass ${
-      compact ? 'min-h-0 p-2 sm:p-2' : 'min-h-[88px] p-3 sm:min-h-[100px] sm:p-4'
-    } ${
-      isToday
-        ? 'ring-2 ring-primary ring-offset-2 ring-offset-background shadow-[0_0_28px_rgba(255,0,127,0.25),0_0_12px_rgba(255,0,127,0.15),inset_0_1px_0_rgba(255,255,255,0.06)]'
+    const baseClass = `relative flex w-full flex-col justify-center rounded-2xl border border-white/10 bg-white/5 text-left backdrop-blur-xl transition-all duration-200 card-glass ${compact ? 'min-h-0 p-2 sm:p-2' : 'min-h-[88px] p-3 sm:min-h-[100px] sm:p-4'
+      } ${isToday
+        ? 'ring-2 ring-primary ring-offset-2 ring-offset-background shadow-[0_0_28px_rgba(224,169,165,0.25),0_0_12px_rgba(224,169,165,0.15),inset_0_1px_0_rgba(255,255,255,0.06)]'
         : 'shadow-lg shadow-black/20'
-    } ${
-      isClickable
-        ? 'cursor-pointer border-white/10 hover:border-primary/50 hover:bg-white/10 hover:shadow-[0_0_24px_rgba(255,0,127,0.18)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background active:bg-white/15'
+      } ${isClickable
+        ? 'cursor-pointer border-white/10 hover:border-primary/50 hover:bg-white/10 hover:shadow-[0_0_24px_rgba(224,169,165,0.18)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background active:bg-white/15'
         : 'cursor-default border-white/10 opacity-90'
-    }`
+      }`
     return (
       <CardWrap
         type={isClickable ? 'button' : undefined}
@@ -438,9 +434,9 @@ export function Dashboard({ schedule, onSelectDay, onOpenHistory, onOpenTour, on
             ? isWorkoutClickable
               ? () => handleDayClick(day)
               : (e: React.MouseEvent) => {
-                  e.stopPropagation()
-                  handleLogRest(day)
-                }
+                e.stopPropagation()
+                handleLogRest()
+              }
             : undefined
         }
         className={baseClass}
@@ -484,7 +480,7 @@ export function Dashboard({ schedule, onSelectDay, onOpenHistory, onOpenTour, on
                   className="min-h-[36px] shrink-0 rounded-full border border-primary/40 bg-primary/10 px-3 text-xs font-medium text-primary transition-colors hover:bg-primary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                   onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                     e.stopPropagation()
-                    handleLogRest(day)
+                    handleLogRest()
                   }}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.98 }}

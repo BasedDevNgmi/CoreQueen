@@ -5,14 +5,14 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --color-charcoal: #0f0f0f;
-  --color-charcoal-soft: #1a1a1a;
-  --color-neon-pink: #FF007F;
-  --color-neon-pink-hover: #ff3399;
+  --color-charcoal: #1A1518;
+  --color-charcoal-soft: #241D21;
+  --color-neon-pink: #E0A9A5;
+  --color-neon-pink-hover: #D17A8A;
   --radius-2xl: 1rem;
   --radius-3xl: 1.5rem;
-  --font-display: 'Syne', system-ui, sans-serif;
-  --font-sans: 'DM Sans', system-ui, sans-serif;
+  --font-display: 'Playfair Display', system-ui, serif;
+  --font-sans: 'Outfit', system-ui, sans-serif;
 }
 
 html {
@@ -37,14 +37,14 @@ body {
 /* Subtle gradient mesh for depth (dark theme) */
 :root body,
 .dark body {
-  background: radial-gradient(ellipse 85% 65% at 50% -25%, rgba(255, 0, 127, 0.12), transparent 50%),
-    radial-gradient(ellipse 60% 40% at 100% 50%, rgba(255, 0, 127, 0.06), transparent),
-    radial-gradient(ellipse 60% 40% at 0% 80%, rgba(255, 0, 127, 0.05), transparent),
+  background: radial-gradient(ellipse 85% 65% at 50% -25%, rgba(224, 169, 165, 0.12), transparent 50%),
+    radial-gradient(ellipse 60% 40% at 100% 50%, rgba(224, 169, 165, 0.06), transparent),
+    radial-gradient(ellipse 60% 40% at 0% 80%, rgba(224, 169, 165, 0.05), transparent),
     var(--background);
 }
 
 .light body {
-  background: radial-gradient(ellipse 80% 60% at 50% -20%, rgba(255, 0, 127, 0.06), transparent),
+  background: radial-gradient(ellipse 80% 60% at 50% -20%, rgba(209, 122, 138, 0.06), transparent),
     var(--background);
 }
 
@@ -95,73 +95,73 @@ body {
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
-/* Pink & Badass: dark (default) */
+/* Premium Feminine: dark (default) */
 :root, .dark {
-  --font-display: 'Syne', system-ui, sans-serif;
-  --font-sans: 'DM Sans', system-ui, sans-serif;
-  --primary-gradient: linear-gradient(135deg, #FF007F 0%, #e60073 50%, #cc0066 100%);
-  --primary-glow: 0 0 24px rgba(255, 0, 127, 0.35), 0 0 48px rgba(255, 0, 127, 0.15);
-  --radius: 0.75rem;
-  --background: #0f0f0f;
-  --foreground: #e5e5e5;
-  --card: rgba(255, 255, 255, 0.06);
-  --card-foreground: #e5e5e5;
-  --popover: #1a1a1a;
-  --popover-foreground: #e5e5e5;
-  --primary: #FF007F;
-  --primary-foreground: #fff;
-  --secondary: rgba(255, 255, 255, 0.1);
-  --secondary-foreground: #e5e5e5;
+  --font-display: 'Playfair Display', system-ui, serif;
+  --font-sans: 'Outfit', system-ui, sans-serif;
+  --primary-gradient: linear-gradient(135deg, #E0A9A5 0%, #D17A8A 50%, #B85F71 100%);
+  --primary-glow: 0 0 24px rgba(224, 169, 165, 0.25), 0 0 48px rgba(209, 122, 138, 0.15);
+  --radius: 1rem;
+  --background: #1A1518;
+  --foreground: #FDF9FA;
+  --card: rgba(255, 255, 255, 0.03);
+  --card-foreground: #FDF9FA;
+  --popover: #241D21;
+  --popover-foreground: #FDF9FA;
+  --primary: #E0A9A5;
+  --primary-foreground: #1A1518;
+  --secondary: rgba(255, 255, 255, 0.06);
+  --secondary-foreground: #FDF9FA;
   --muted: rgba(255, 255, 255, 0.08);
-  --muted-foreground: #a3a3a3;
-  --accent: #FF007F;
-  --accent-foreground: #fff;
+  --muted-foreground: #BBAFB5;
+  --accent: #D17A8A;
+  --accent-foreground: #FDF9FA;
   --destructive: oklch(0.704 0.191 22.216);
-  --border: rgba(255, 255, 255, 0.1);
-  --input: rgba(255, 255, 255, 0.15);
-  --ring: #FF007F;
-  --chart-1: #FF007F;
-  --chart-2: #ff3399;
-  --chart-3: #a3a3a3;
-  --chart-4: #737373;
-  --chart-5: #525252;
-  --sidebar: #1a1a1a;
-  --sidebar-foreground: #e5e5e5;
-  --sidebar-primary: #FF007F;
-  --sidebar-primary-foreground: #fff;
-  --sidebar-accent: rgba(255, 0, 127, 0.15);
-  --sidebar-accent-foreground: #e5e5e5;
-  --sidebar-border: rgba(255, 255, 255, 0.1);
-  --sidebar-ring: #FF007F;
+  --border: rgba(255, 255, 255, 0.08);
+  --input: rgba(255, 255, 255, 0.1);
+  --ring: #E0A9A5;
+  --chart-1: #E0A9A5;
+  --chart-2: #D17A8A;
+  --chart-3: #BBAFB5;
+  --chart-4: #8A7E84;
+  --chart-5: #544A4F;
+  --sidebar: #241D21;
+  --sidebar-foreground: #FDF9FA;
+  --sidebar-primary: #E0A9A5;
+  --sidebar-primary-foreground: #1A1518;
+  --sidebar-accent: rgba(224, 169, 165, 0.15);
+  --sidebar-accent-foreground: #FDF9FA;
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+  --sidebar-ring: #E0A9A5;
 }
 
-/* Pink & Badass: light */
+/* Premium Feminine: light */
 .light {
-  --background: #f5f5f5;
-  --foreground: #1a1a1a;
-  --card: rgba(0, 0, 0, 0.04);
-  --card-foreground: #1a1a1a;
-  --popover: #ffffff;
-  --popover-foreground: #1a1a1a;
-  --primary: #FF007F;
-  --primary-foreground: #fff;
-  --secondary: rgba(0, 0, 0, 0.06);
-  --secondary-foreground: #1a1a1a;
-  --muted: rgba(0, 0, 0, 0.06);
-  --muted-foreground: #525252;
-  --accent: #FF007F;
-  --accent-foreground: #fff;
-  --border: rgba(0, 0, 0, 0.1);
-  --input: rgba(0, 0, 0, 0.1);
-  --ring: #FF007F;
-  --sidebar: #fafafa;
-  --sidebar-foreground: #1a1a1a;
-  --sidebar-primary: #FF007F;
-  --sidebar-primary-foreground: #fff;
-  --sidebar-accent: rgba(255, 0, 127, 0.12);
-  --sidebar-accent-foreground: #1a1a1a;
-  --sidebar-border: rgba(0, 0, 0, 0.08);
-  --sidebar-ring: #FF007F;
+  --background: #FCF9F9;
+  --foreground: #2A2426;
+  --card: rgba(255, 255, 255, 0.6);
+  --card-foreground: #2A2426;
+  --popover: #FFFFFF;
+  --popover-foreground: #2A2426;
+  --primary: #D17A8A;
+  --primary-foreground: #FFFFFF;
+  --secondary: rgba(209, 122, 138, 0.1);
+  --secondary-foreground: #2A2426;
+  --muted: rgba(209, 122, 138, 0.06);
+  --muted-foreground: #8A7E84;
+  --accent: #E0A9A5;
+  --accent-foreground: #FFFFFF;
+  --border: rgba(209, 122, 138, 0.15);
+  --input: rgba(209, 122, 138, 0.15);
+  --ring: #D17A8A;
+  --sidebar: #FFFFFF;
+  --sidebar-foreground: #2A2426;
+  --sidebar-primary: #D17A8A;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: rgba(209, 122, 138, 0.12);
+  --sidebar-accent-foreground: #2A2426;
+  --sidebar-border: rgba(209, 122, 138, 0.15);
+  --sidebar-ring: #D17A8A;
 }
 
 @layer base {
@@ -178,7 +178,7 @@ body {
 }
 
 .card-glass {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -4px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05), inset 0 1px 1px rgba(255, 255, 255, 0.15);
 }
 
 /* Reduced motion */

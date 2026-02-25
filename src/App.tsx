@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback, lazy, Suspense } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { Dashboard } from '@/components/Dashboard'
-import { WORKOUT_SCHEDULE } from '@/data/workouts'
 import type { WorkoutDay } from '@/data/workouts'
 
 const WorkoutView = lazy(() =>
@@ -73,6 +72,11 @@ function App() {
     setPendingWorkoutDay(null)
   }, [pendingWorkoutDay, t])
 
+  const handleVibeDismiss = useCallback(() => {
+    setVibeCheckOpen(false)
+    setPendingWorkoutDay(null)
+  }, [])
+
   const handleBack = useCallback(() => {
     setView('dashboard')
     setSelectedDay(null)
@@ -103,7 +107,6 @@ function App() {
             {view === 'dashboard' && (
               <Dashboard
                 key="dashboard"
-                schedule={WORKOUT_SCHEDULE}
                 onSelectDay={handleSelectDay}
                 onOpenHistory={handleOpenHistory}
                 onOpenTour={handleOpenTour}
@@ -156,7 +159,11 @@ function App() {
         )}
       </AnimatePresence>
 
-      <VibeCheckModal open={vibeCheckOpen} onComplete={handleVibeComplete} />
+      <VibeCheckModal
+        open={vibeCheckOpen}
+        onComplete={handleVibeComplete}
+        onDismiss={handleVibeDismiss}
+      />
       <OnboardingTour open={tourOpen} onOpenChange={setTourOpen} />
     </div>
   )

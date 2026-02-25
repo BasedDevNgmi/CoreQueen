@@ -1,13 +1,13 @@
 import { useState, useEffect, useMemo } from 'react'
-import { motion } from 'framer-motion'
+import { motion, type Variants } from 'framer-motion'
 import { CheckCircle2, Clock, Flame } from 'lucide-react'
 import { getWeekStart, addDays, toDateString } from '@/lib/calendar'
 import { useLogs } from '@/hooks/useLogs'
 import { useTranslation } from '@/lib/i18n'
 import type { WorkoutDay } from '@/data/workouts'
+import { WORKOUT_SCHEDULE_6_WEEKS } from '@/data/workouts'
 
 interface DashboardProps {
-  schedule: WorkoutDay[]
   onSelectDay: (day: WorkoutDay) => void
   onOpenHistory?: () => void
   onOpenTour?: () => void
@@ -22,29 +22,49 @@ const container = {
   },
 }
 
-const item: any = {
+const item: Variants = {
   hidden: { opacity: 0, y: 15 },
   show: { opacity: 1, y: 0, transition: { type: 'spring', damping: 25, stiffness: 200 } },
 }
 
-export function Dashboard({ schedule, onSelectDay }: DashboardProps) {
+export function Dashboard({ onSelectDay }: DashboardProps) {
   const { t } = useTranslation()
   const [weekStart] = useState(() => getWeekStart(new Date()))
   const [completedDates, setCompletedDates] = useState<Set<string>>(new Set())
   const { fetchLogsForDateRange } = useLogs()
+  const [selectedWeekNum, setSelectedWeekNum] = useState<number | null>(null)
 
   useEffect(() => {
     let cancelled = false
-    const start = new Date(weekStart)
+
+    // Fetch up to 6 weeks ago to determine the current week for the program.
+    const startHistory = addDays(weekStart, -(6 * 7))
     const end = addDays(weekStart, 6)
     end.setHours(23, 59, 59, 999)
-    fetchLogsForDateRange(start, end).then(({ completedDates: set }) => {
+
+    fetchLogsForDateRange(startHistory, end).then(({ completedDates: set }) => {
       if (!cancelled) setCompletedDates(set)
     })
     return () => {
       cancelled = true
     }
   }, [weekStart, fetchLogsForDateRange])
+
+  // Determine current week (1-6) based on history 
+  // Very simple approach: see how many distinct weeks they have logged at least once.
+  const currentWeekNum = useMemo(() => {
+    // To ensure a proper 6-week progression, we map it based on how many logs they have total.
+    // Roughly 3 days a week. Every 3 logs = 1 week advanced.
+    const totalLogs = completedDates.size
+    const computedWeek = Math.floor(totalLogs / 3) + 1
+    // Cap strictly at week 1 to 6
+    return Math.max(1, Math.min(6, computedWeek))
+  }, [completedDates])
+
+  // Use the explicitly selected week or default to the highest unlocked week
+  const activeWeekNum = selectedWeekNum ?? currentWeekNum
+
+  const schedule = WORKOUT_SCHEDULE_6_WEEKS[activeWeekNum] || WORKOUT_SCHEDULE_6_WEEKS[1]
 
   const { mappedDays, completedCount } = useMemo(() => {
     let count = 0
@@ -67,8 +87,10 @@ export function Dashboard({ schedule, onSelectDay }: DashboardProps) {
     >
       {/* Hero Section */}
       <motion.div variants={item} className="mb-10 mt-4">
-        <p className="mb-4 text-xs font-semibold tracking-[0.2em] text-muted-foreground uppercase">
-          {t('dashboard.heroThisWeek')}
+        <p className="mb-4 text-xs font-semibold tracking-[0.2em] text-muted-foreground uppercase flex gap-2 items-center">
+          <span>{t('dashboard.heroThisWeek')}</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+          <span>PROGRAMMA</span>
         </p>
         <h1 className="font-display text-[3.25rem] leading-[1.1] tracking-tight text-foreground">
           {t('dashboard.heroYourCore')}<br />
@@ -77,6 +99,29 @@ export function Dashboard({ schedule, onSelectDay }: DashboardProps) {
         <p className="mt-6 text-[15px] leading-relaxed text-muted-foreground pr-4">
           {t('dashboard.heroDesc')}
         </p>
+
+        {/* Horizontal Week Selector */}
+        <div className="mt-8 -mx-6 px-6 overflow-x-auto pb-4 scrollbar-hide snap-x flex gap-3">
+          {[1, 2, 3, 4, 5, 6].map((w) => {
+            const isSelected = activeWeekNum === w
+            const isLocked = w > currentWeekNum
+
+            return (
+              <button
+                key={w}
+                onClick={() => !isLocked && setSelectedWeekNum(w)}
+                className={`snap-start shrink-0 rounded-full px-5 py-2 text-sm font-bold transition-all duration-300 border ${isSelected
+                  ? 'bg-charcoal text-white border-charcoal ring-2 ring-charcoal/20'
+                  : isLocked
+                    ? 'bg-muted/50 text-muted-foreground/50 border-transparent cursor-not-allowed'
+                    : 'bg-white text-charcoal border-border hover:border-charcoal/30'
+                  }`}
+              >
+                WEEK {w}
+              </button>
+            )
+          })}
+        </div>
       </motion.div>
 
       {/* Progress Section */}

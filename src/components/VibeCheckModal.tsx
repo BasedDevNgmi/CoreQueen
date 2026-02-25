@@ -6,9 +6,10 @@ import { useTranslation } from '@/lib/i18n'
 interface VibeCheckModalProps {
     open: boolean
     onComplete: (vibe: 'drained' | 'balanced' | 'unstoppable') => void
+    onDismiss?: () => void
 }
 
-export function VibeCheckModal({ open, onComplete }: VibeCheckModalProps) {
+export function VibeCheckModal({ open, onComplete, onDismiss }: VibeCheckModalProps) {
     const { t } = useTranslation()
     const [selected, setSelected] = useState<'drained' | 'balanced' | 'unstoppable' | null>(null)
 
@@ -40,14 +41,20 @@ export function VibeCheckModal({ open, onComplete }: VibeCheckModalProps) {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-6 backdrop-blur-md bg-black/20"
+                    transition={{ duration: 0.15 }}
+                    className="fixed inset-0 z-[100] flex flex-col items-center justify-center p-6 bg-white/95"
+                    onClick={(e) => {
+                        if (e.target === e.currentTarget && onDismiss) {
+                            onDismiss()
+                        }
+                    }}
                 >
                     <motion.div
-                        initial={{ y: 20, opacity: 0, scale: 0.95 }}
+                        initial={{ y: 20, opacity: 0, scale: 0.98 }}
                         animate={{ y: 0, opacity: 1, scale: 1 }}
-                        exit={{ y: 20, opacity: 0, scale: 0.95 }}
-                        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                        className="w-full max-w-lg card-minimal rounded-[2rem] p-8 text-center relative overflow-hidden bg-white"
+                        exit={{ y: 20, opacity: 0, scale: 0.98 }}
+                        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                        className="w-full max-w-lg card-minimal rounded-[2rem] p-8 text-center relative overflow-hidden bg-white shadow-2xl shadow-black/5"
                     >
                         <h2 className="font-display text-4xl mb-2 text-foreground relative z-10">{t('vibe.title')}</h2>
                         <p className="text-muted-foreground mb-8 text-lg relative z-10">{t('vibe.subtitle')}</p>
@@ -57,12 +64,12 @@ export function VibeCheckModal({ open, onComplete }: VibeCheckModalProps) {
                                 <motion.button
                                     key={v.id}
                                     whileHover={{ scale: 1.02 }}
-                                    whileTap={{ scale: 0.98 }}
+                                    whileTap={{ scale: 0.96 }}
                                     onClick={() => {
                                         setSelected(v.id)
-                                        setTimeout(() => onComplete(v.id), 400) // slight delay for animation
+                                        setTimeout(() => onComplete(v.id), 200) // faster transition after selection
                                     }}
-                                    className={`relative flex flex-col items-center justify-center rounded-2xl p-6 text-center transition-all duration-300 border ${selected === v.id
+                                    className={`relative flex flex-col items-center justify-center rounded-2xl p-6 text-center transition-all duration-200 border ${selected === v.id
                                         ? 'border-charcoal ring-1 ring-charcoal bg-muted/30'
                                         : 'border-border hover:border-muted-foreground/30 bg-white'
                                         }`}

@@ -1,9 +1,8 @@
 import { useState, useCallback, useEffect, useMemo } from 'react'
 import confetti from 'canvas-confetti'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowLeft, CheckCircle2, Info } from 'lucide-react'
+import { ArrowLeft, CheckCircle2, Info, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
 import { CardContent } from '@/components/ui/card'
 import type { WorkoutDay } from '@/data/workouts'
 import { toExerciseData } from '@/data/workouts'
@@ -12,11 +11,10 @@ import { ExerciseDetailSheet } from './ExerciseDetailSheet'
 import { getSoundEnabled } from '@/lib/settings'
 import { useTranslation } from '@/lib/i18n'
 import type { WorkoutExercise } from '@/data/workouts'
+import { vibrate } from '@/lib/haptics'
 
 function playCompletionFeedback() {
-  if (typeof navigator !== 'undefined' && navigator.vibrate) {
-    navigator.vibrate(50)
-  }
+  vibrate(50)
   if (getSoundEnabled()) {
     try {
       const ctx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)()
@@ -74,9 +72,17 @@ interface WorkoutViewProps {
 
 export function WorkoutView({ day, onBack }: WorkoutViewProps) {
   const { t } = useTranslation()
-  const [completed, setCompleted] = useState<boolean[]>(
-    day.exercises.map(() => false)
+  const parsedSets = useMemo(() => {
+    return day.exercises.map(ex => {
+      const match = ex.setsReps.match(/^(\d+)\s*[x×*]/i)
+      return match ? parseInt(match[1], 10) : 1
+    })
+  }, [day.exercises])
+
+  const [completedSets, setCompletedSets] = useState<number[]>(
+    day.exercises.map(() => 0)
   )
+  const completed = useMemo(() => completedSets.map((count, i) => count === parsedSets[i]), [completedSets, parsedSets])
   const [logModalOpen, setLogModalOpen] = useState(false)
   const [restSecondsLeft, setRestSecondsLeft] = useState<number | null>(null)
   const [exerciseDetail, setExerciseDetail] = useState<WorkoutExercise | null>(null)
@@ -94,14 +100,14 @@ export function WorkoutView({ day, onBack }: WorkoutViewProps) {
     return () => clearInterval(id)
   }, [restSecondsLeft])
 
-  const toggle = useCallback(
+  const toggleAll = useCallback(
     (index: number) => {
-      setCompleted((prev) => {
+      setCompletedSets((prev) => {
         const next = [...prev]
-        const newVal = !next[index]
-        next[index] = newVal
-        if (newVal) {
-          fireConfetti()
+        const total = parsedSets[index]
+        const isComplete = next[index] === total
+        next[index] = isComplete ? 0 : total
+        if (!isComplete) {
           playCompletionFeedback()
           if (index < day.exercises.length - 1) {
             setRestSecondsLeft(getRestSeconds())
@@ -110,7 +116,30 @@ export function WorkoutView({ day, onBack }: WorkoutViewProps) {
         return next
       })
     },
-    [day.exercises.length]
+    [day.exercises.length, parsedSets]
+  )
+
+  const toggleSet = useCallback(
+    (exIndex: number, setIndex: number) => {
+      setCompletedSets((prev) => {
+        const next = [...prev]
+        const current = next[exIndex]
+        if (current === setIndex + 1) {
+          next[exIndex] = setIndex
+        } else {
+          next[exIndex] = setIndex + 1
+          vibrate(20) // subtle pop for a single set
+        }
+        if (next[exIndex] === parsedSets[exIndex] && current !== parsedSets[exIndex]) {
+          playCompletionFeedback()
+          if (exIndex < day.exercises.length - 1) {
+            setRestSecondsLeft(getRestSeconds())
+          }
+        }
+        return next
+      })
+    },
+    [day.exercises.length, parsedSets]
   )
 
   const exerciseData = useMemo(
@@ -118,6 +147,13 @@ export function WorkoutView({ day, onBack }: WorkoutViewProps) {
     [day.exercises, completed]
   )
   const allDone = useMemo(() => completed.every(Boolean), [completed])
+
+  useEffect(() => {
+    if (allDone && day.exercises.length > 0) {
+      fireConfetti()
+      vibrate([100, 50, 100])
+    }
+  }, [allDone, day.exercises.length])
 
   return (
     <motion.div
@@ -149,65 +185,98 @@ export function WorkoutView({ day, onBack }: WorkoutViewProps) {
         </h2>
       </div>
 
-      <div className="card-minimal p-4 sm:p-6 mb-8">
-        <div className="mb-6 px-2">
+      <div className="card-minimal pt-3 pb-2 mb-8">
+        <div className="mb-2 px-6 pt-4">
           <h3 className="text-xs tracking-widest uppercase text-muted-foreground font-semibold">{t('workout.exercises')}</h3>
         </div>
-        <CardContent>
+        <CardContent className="px-0 pb-0">
           <motion.ul
-            className="space-y-2 sm:space-y-3"
+            className="flex flex-col"
             variants={listVariants}
             initial="hidden"
             animate="show"
           >
             <AnimatePresence>
-              {day.exercises.map((ex, i) => (
-                <motion.li
-                  key={`${ex.name}-${i}`}
-                  variants={rowVariants}
-                  className="flex min-h-[64px] items-center gap-4 rounded-2xl border border-border bg-white px-4 py-3 sm:px-5"
-                >
-                  <Checkbox
-                    id={`ex-${i}`}
-                    checked={completed[i]}
-                    onCheckedChange={() => toggle(i)}
-                    className="size-6 rounded-full border-muted-foreground/30 data-[state=checked]:bg-charcoal-light data-[state=checked]:border-charcoal-light"
-                  />
-                  <label
-                    htmlFor={`ex-${i}`}
-                    className="flex min-w-0 flex-1 cursor-pointer flex-col gap-1 text-foreground"
+              {day.exercises.map((ex, i) => {
+                const isCompleted = completed[i]
+                const totalSets = parsedSets[i]
+                return (
+                  <motion.li
+                    key={`${ex.name}-${i}`}
+                    variants={rowVariants}
+                    className="flex flex-col border-b border-border px-6 py-5 last:border-0"
                   >
-                    <span className="flex min-w-0 items-center gap-2">
-                      {completed[i] ? (
-                        <CheckCircle2 className="size-5 shrink-0 text-primary" />
-                      ) : null}
-                      <span className={`min-w-0 truncate sm:max-w-none text-base font-medium ${completed[i] ? 'line-through text-muted-foreground' : ''}`}>
-                        {ex.name}
-                      </span>
-                      <span className="text-sm font-normal text-muted-foreground ml-auto pr-2">
-                        {ex.setsReps}
-                      </span>
+                    <div className="flex items-start gap-4">
                       <button
-                        type="button"
-                        onClick={(e) => {
-                          e.preventDefault()
-                          setExerciseDetail(ex)
-                          setExerciseDetailOpen(true)
-                        }}
-                        className="ml-auto rounded p-1 text-muted-foreground hover:bg-white/10 hover:text-primary"
-                        aria-label={`Info over ${ex.name}`}
+                        onClick={() => toggleAll(i)}
+                        className="mt-1 shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-full"
+                        aria-label={`Toggle all for ${ex.name}`}
                       >
-                        <Info className="size-4" />
+                        {isCompleted ? (
+                          <CheckCircle2 className="size-[26px] text-charcoal" />
+                        ) : (
+                          <div className="size-[26px] rounded-full border-2 border-muted-foreground/30 hover:border-charcoal-light/50 transition-colors" />
+                        )}
                       </button>
-                    </span>
-                    {ex.why ? (
-                      <span className="text-xs text-muted-foreground line-clamp-1">
-                        {ex.why}
-                      </span>
-                    ) : null}
-                  </label>
-                </motion.li>
-              ))}
+
+                      <div className="flex min-w-0 flex-1 flex-col">
+                        <div className="flex items-start justify-between">
+                          <h4 className={`font-display text-[1.15rem] font-bold ${isCompleted ? 'line-through text-muted-foreground' : 'text-foreground'}`}>
+                            {ex.name}
+                          </h4>
+                          <div className="flex items-center gap-3 shrink-0 ml-4 pt-1">
+                            <span className="text-sm font-medium text-muted-foreground">
+                              {ex.setsReps}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                setExerciseDetail(ex)
+                                setExerciseDetailOpen(true)
+                              }}
+                              className="text-muted-foreground hover:text-primary transition-colors"
+                              aria-label={`Info over ${ex.name}`}
+                            >
+                              <Info className="size-[1.1rem]" />
+                            </button>
+                          </div>
+                        </div>
+
+                        {ex.why && (
+                          <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground pr-8">
+                            {ex.why}
+                          </p>
+                        )}
+
+                        {totalSets > 1 && (
+                          <div className="mt-4 flex flex-wrap gap-2.5">
+                            {Array.from({ length: totalSets }).map((_, setIdx) => {
+                              const setDone = completedSets[i] > setIdx
+                              return (
+                                <button
+                                  key={setIdx}
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    toggleSet(i, setIdx)
+                                  }}
+                                  className={`size-8 rounded-full border flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary
+                                    ${setDone
+                                      ? 'bg-charcoal border-charcoal text-white'
+                                      : 'border-charcoal-light/30 hover:border-charcoal-light/60 bg-transparent text-transparent'}`}
+                                  aria-label={`Set ${setIdx + 1}`}
+                                >
+                                  <Check className="size-4" strokeWidth={3} />
+                                </button>
+                              )
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </motion.li>
+                )
+              })}
             </AnimatePresence>
           </motion.ul>
         </CardContent>

@@ -47,7 +47,7 @@ const LogCard = memo(function LogCard({
   return (
     <motion.div
       layout
-      className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl"
+      className="card-minimal p-5 mb-4"
     >
       <button
         type="button"
@@ -57,7 +57,7 @@ const LogCard = memo(function LogCard({
         <div className="flex min-w-0 flex-1 items-center gap-3">
           <span className="shrink-0 text-2xl">{log.feeling ?? '—'}</span>
           <div className="min-w-0">
-            <p className="truncate font-semibold text-foreground">{formatLogDate(log.created_at, localeForIntl)}</p>
+            <p className="truncate font-display text-lg font-bold text-foreground">{formatLogDate(log.created_at, localeForIntl)}</p>
             <p className="text-sm text-muted-foreground">
               {completed}/{total} {exercisesLabel}
             </p>
@@ -78,7 +78,7 @@ const LogCard = memo(function LogCard({
             transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <div className="mt-3 border-t border-white/10 pt-3">
+            <div className="mt-4 border-t border-border pt-4">
               {log.exercise_data?.length ? (
                 <ul className="space-y-1 text-sm text-muted-foreground">
                   {log.exercise_data.map((e, i) => (
@@ -169,9 +169,9 @@ export function HistoryView({ onBack }: HistoryViewProps) {
           className="shrink-0 text-muted-foreground hover:text-foreground"
           aria-label="Back"
         >
-          <ArrowLeft className="size-5" />
+          <ArrowLeft className="size-6 stroke-[1.5]" />
         </Button>
-        <h2 className="min-w-0 flex-1 text-center text-lg font-bold text-foreground sm:text-xl">{t('history.title')}</h2>
+        <h2 className="min-w-0 flex-1 text-center font-display italic text-3xl font-bold tracking-tight text-foreground sm:text-4xl">{t('history.title')}</h2>
         <div className="flex shrink-0 gap-2">
           <Button
             variant="ghost"

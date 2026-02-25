@@ -9,7 +9,10 @@ export interface WorkoutExercise {
 
 export interface WorkoutDay {
   id: string
-  label: string
+  dayIndex: number // 0 = Mon, 1 = Tue, etc.
+  title: string
+  duration: string
+  intensity: 'Light' | 'Medium' | 'Hard'
   exercises: WorkoutExercise[]
 }
 
@@ -76,9 +79,30 @@ export const RESTORATIVE_FLOW: WorkoutExercise[] = [
 ]
 
 export const WORKOUT_SCHEDULE: WorkoutDay[] = [
-  { id: 'ma', label: 'Maandag', exercises: CORE_WORKOUT },
-  { id: 'wo', label: 'Woensdag', exercises: CORE_WORKOUT },
-  { id: 'vr', label: 'Vrijdag', exercises: CORE_WORKOUT },
+  {
+    id: 'day1',
+    dayIndex: 0,
+    title: 'Foundation & Stability',
+    duration: '15 min',
+    intensity: 'Light',
+    exercises: CORE_WORKOUT
+  },
+  {
+    id: 'day2',
+    dayIndex: 2,
+    title: 'Deep Core & Glutes',
+    duration: '15 min',
+    intensity: 'Medium',
+    exercises: CORE_WORKOUT
+  },
+  {
+    id: 'day3',
+    dayIndex: 4,
+    title: 'Power & Endurance',
+    duration: '15 min',
+    intensity: 'Hard',
+    exercises: CORE_WORKOUT
+  },
 ]
 
 export function toExerciseData(

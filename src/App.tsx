@@ -16,9 +16,11 @@ const SettingsView = lazy(() =>
 import { flushPendingLogs, getPendingCount } from '@/lib/offlineLogs'
 import { Button } from '@/components/ui/button'
 import { OnboardingTour, shouldShowTour } from '@/components/OnboardingTour'
+import { Home, Calendar as CalendarIcon } from 'lucide-react'
 import { useTranslation } from '@/lib/i18n'
 import { VibeCheckModal } from '@/components/VibeCheckModal'
 import { RESTORATIVE_FLOW } from '@/data/workouts'
+import { motion } from 'framer-motion'
 
 type View = 'dashboard' | 'workout' | 'history' | 'settings'
 
@@ -27,13 +29,9 @@ function App() {
   const [view, setView] = useState<View>('dashboard')
   const [selectedDay, setSelectedDay] = useState<WorkoutDay | null>(null)
   const [pendingCount, setPendingCount] = useState(() => getPendingCount())
-  const [tourOpen, setTourOpen] = useState(false)
+  const [tourOpen, setTourOpen] = useState(() => shouldShowTour())
   const [vibeCheckOpen, setVibeCheckOpen] = useState(false)
   const [pendingWorkoutDay, setPendingWorkoutDay] = useState<WorkoutDay | null>(null)
-
-  useEffect(() => {
-    if (shouldShowTour()) setTourOpen(true)
-  }, [])
 
   const refreshPendingCount = useCallback(() => {
     flushPendingLogs().then((r) => setPendingCount(r.remaining))
@@ -65,7 +63,7 @@ function App() {
     if (vibe === 'drained') {
       setSelectedDay({
         ...pendingWorkoutDay,
-        label: t('app.restorativeSession'),
+        title: t('app.restorativeSession'),
         exercises: RESTORATIVE_FLOW,
       })
     } else {
@@ -85,6 +83,8 @@ function App() {
   const handleOpenSettings = useCallback(() => setView('settings'), [])
   const handleBackToDashboard = useCallback(() => setView('dashboard'), [])
 
+  const showBottomNav = view === 'dashboard' || view === 'history'
+
   return (
     <div className="min-h-screen min-h-[100dvh] bg-background pt-[env(safe-area-inset-top)]">
       {pendingCount > 0 && (
@@ -97,7 +97,7 @@ function App() {
           </Button>
         </div>
       )}
-      <main className="pb-[env(safe-area-inset-bottom)]">
+      <main className={`flex-1 overflow-y-auto ${showBottomNav ? 'pb-24' : 'pb-[env(safe-area-inset-bottom)]'}`}>
         <Suspense fallback={<div className="flex min-h-[50vh] items-center justify-center text-muted-foreground">Loading…</div>}>
           <AnimatePresence mode="wait">
             {view === 'dashboard' && (
@@ -126,6 +126,36 @@ function App() {
           </AnimatePresence>
         </Suspense>
       </main>
+
+      <AnimatePresence>
+        {showBottomNav && (
+          <motion.nav
+            initial={{ y: '100%' }}
+            animate={{ y: 0 }}
+            exit={{ y: '100%' }}
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            className="fixed bottom-0 left-0 right-0 z-40 flex items-center justify-around border-t border-border bg-white pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-3"
+          >
+            <button
+              onClick={() => setView('dashboard')}
+              className={`flex flex-col items-center gap-1.5 px-6 transition-colors ${view === 'dashboard' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
+                }`}
+            >
+              <Home className="size-6 stroke-[1.5]" />
+              <span className="text-[10px] font-medium tracking-widest uppercase">{t('nav.home')}</span>
+            </button>
+            <button
+              onClick={() => setView('history')}
+              className={`flex flex-col items-center gap-1.5 px-6 transition-colors ${view === 'history' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
+                }`}
+            >
+              <CalendarIcon className="size-6 stroke-[1.5]" />
+              <span className="text-[10px] font-medium tracking-widest uppercase">{t('nav.history')}</span>
+            </button>
+          </motion.nav>
+        )}
+      </AnimatePresence>
+
       <VibeCheckModal open={vibeCheckOpen} onComplete={handleVibeComplete} />
       <OnboardingTour open={tourOpen} onOpenChange={setTourOpen} />
     </div>

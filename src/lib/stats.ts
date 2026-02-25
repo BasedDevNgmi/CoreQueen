@@ -20,9 +20,9 @@ export function computeStreakAndMonth(logs: LogRow[]): {
   }
 
   let currentStreakWeeks = 0
-  let check = new Date(now)
+  const check = new Date(now)
   const thisWeekStart = getWeekStart(check)
-  let weekStart = new Date(thisWeekStart)
+  const weekStart = new Date(thisWeekStart)
   while (true) {
     const key = toDateString(weekStart)
     if (weekDates.has(key)) {

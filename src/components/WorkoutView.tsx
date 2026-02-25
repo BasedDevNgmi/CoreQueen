@@ -127,7 +127,7 @@ export function WorkoutView({ day, onBack }: WorkoutViewProps) {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2 }}
     >
-      <div className="mb-8 flex min-h-[44px] items-center justify-between gap-2 sm:mb-10">
+      <div className="mb-8 flex min-h-[44px] items-center justify-between gap-2 sm:mb-10 mt-2">
         <Button
           variant="ghost"
           size="icon"
@@ -137,13 +137,21 @@ export function WorkoutView({ day, onBack }: WorkoutViewProps) {
         >
           <ArrowLeft className="size-6 stroke-[1.5]" />
         </Button>
-        <h2 className="min-w-0 font-display italic text-3xl font-bold tracking-tight text-foreground sm:text-5xl">{day.label}</h2>
+        <span className="text-[10px] font-bold tracking-widest text-primary uppercase">
+          {t('dashboard.workout')}
+        </span>
         <div className="w-10 shrink-0" />
       </div>
 
-      <div className="card-glass rounded-3xl p-4 sm:p-6 mb-8">
+      <div className="mb-10 text-center">
+        <h2 className="font-display text-[2.5rem] leading-[1.1] tracking-tight text-foreground sm:text-5xl">
+          {day.title}
+        </h2>
+      </div>
+
+      <div className="card-minimal p-4 sm:p-6 mb-8">
         <div className="mb-6 px-2">
-          <h3 className="text-sm tracking-[0.2em] uppercase text-primary font-semibold">{t('workout.exercises')}</h3>
+          <h3 className="text-xs tracking-widest uppercase text-muted-foreground font-semibold">{t('workout.exercises')}</h3>
         </div>
         <CardContent>
           <motion.ul
@@ -157,26 +165,26 @@ export function WorkoutView({ day, onBack }: WorkoutViewProps) {
                 <motion.li
                   key={`${ex.name}-${i}`}
                   variants={rowVariants}
-                  className="flex min-h-[56px] items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-3 py-3 sm:px-4"
+                  className="flex min-h-[64px] items-center gap-4 rounded-2xl border border-border bg-white px-4 py-3 sm:px-5"
                 >
                   <Checkbox
                     id={`ex-${i}`}
                     checked={completed[i]}
                     onCheckedChange={() => toggle(i)}
-                    className="border-white/30 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                    className="size-6 rounded-full border-muted-foreground/30 data-[state=checked]:bg-charcoal-light data-[state=checked]:border-charcoal-light"
                   />
                   <label
                     htmlFor={`ex-${i}`}
-                    className="flex min-w-0 flex-1 cursor-pointer flex-col gap-0.5 text-foreground"
+                    className="flex min-w-0 flex-1 cursor-pointer flex-col gap-1 text-foreground"
                   >
                     <span className="flex min-w-0 items-center gap-2">
                       {completed[i] ? (
                         <CheckCircle2 className="size-5 shrink-0 text-primary" />
                       ) : null}
-                      <span className={`min-w-0 truncate sm:max-w-none ${completed[i] ? 'line-through opacity-80' : ''}`}>
+                      <span className={`min-w-0 truncate sm:max-w-none text-base font-medium ${completed[i] ? 'line-through text-muted-foreground' : ''}`}>
                         {ex.name}
                       </span>
-                      <span className="text-muted-foreground">
+                      <span className="text-sm font-normal text-muted-foreground ml-auto pr-2">
                         {ex.setsReps}
                       </span>
                       <button
@@ -205,10 +213,10 @@ export function WorkoutView({ day, onBack }: WorkoutViewProps) {
         </CardContent>
       </div>
 
-      <div className="flex justify-end">
+      <div className="flex justify-end mb-12">
         <Button
           size="lg"
-          className="bg-primary font-bold hover:bg-neon-pink-hover"
+          className="w-full sm:w-auto bg-charcoal text-white rounded-full font-bold hover:bg-charcoal-light py-6"
           onClick={() => setLogModalOpen(true)}
           disabled={!allDone}
         >
